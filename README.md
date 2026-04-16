@@ -3,6 +3,23 @@
 Suivez le [compte Instagram](https://www.instagram.com/atlanticup_bzh/) pour être au courant des dernières news.
 L'AtlanticApp est une compétition sportive qui réunnnit chaque année près de 700 étudiants ingénieurs. La compétition est organisée par les élèves d'IMT Atlantique.
 L'AtlanticApp est une application mobile faite pour améliorer l'expérience des participants et supporters pendant le déroulement de cette compétition. 
+Plus d'informations disponibles [ici](https://www.atlanticapp.fr).
+
+# Comment faire une simulation localement
+
+Cloner le projet, installer les modules nécessaires avec `npm install`.
+**ATTENTION** : évitez les noms de dossier avec des espaces dans l'emplacement de votre repo. Par exemple :<br>
+✅ dossier-parent<br>
+❌ dossier parent
+### Simulateur Android
+```
+npx expo run:android
+```
+
+### Simulateur iOS
+```
+npx expo run:ios
+```
 
 
 # Contribuer
