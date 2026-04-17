@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, FlatList, RefreshControl, Alert, Animated, Dimensions, Image} from 'react-native';
+import { View, Text, StyleSheet, FlatList, RefreshControl, Alert, Animated, Dimensions, Image, Button} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -157,7 +157,7 @@ const CalendarTab: React.FC = () => {
             <Animated.View style={[styles.eventListContainer, { height: listHeight, marginHorizontal: listMargin}]}>
                 <FlatList
                     data={events}
-                    scrollEnabled={!loading}
+                    scrollEnabled={!loading && events.length > 0}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id}
                     ListHeaderComponent={
@@ -197,8 +197,9 @@ const CalendarTab: React.FC = () => {
                     onEndReachedThreshold={0.5}
 
                     ListEmptyComponent={() => (
-                        <View style={{ height:400, width:'100%', alignItems:'center', justifyContent:'center'}}>
-                                <Text>No data found</Text>
+                        <View style={{ height:300, width:'100%', alignItems:'center', justifyContent:'center'}}>
+                                <Text style={{fontSize:20}}>Aucun match à afficher.</Text>
+                                <Button title="Rafraîchir" onPress={refreshEvents} color="#1d4966"/>
                         </View>
                     )}
 
