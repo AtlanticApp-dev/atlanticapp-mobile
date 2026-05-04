@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image} from 'react-native';
+import React from 'react';
+import { View, StyleSheet, Image} from 'react-native';
 import Animated from 'react-native-reanimated';
 
 interface AnimatedMarkerProps {

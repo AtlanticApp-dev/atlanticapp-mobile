@@ -1,8 +1,6 @@
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { getTeamFromId } from '@/src/api/services/firestore/teamsService';
-import { getDelegationFromId } from '@/src/api/services/firestore/delegationService';
 import { getPlaceFromId } from '@/src/api/services/firestore/placeService';
 import { getSportFromId } from '@/src/api/services/firestore/sportsService';
 import { translatePhase, translateStatus } from '@/src/utils/matchMetadataTranslator';

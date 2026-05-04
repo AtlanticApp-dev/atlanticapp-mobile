@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Modal, TouchableWithoutFeedback, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlatList } from 'react-native-gesture-handler';
@@ -141,7 +141,6 @@ const ProfileScreen: React.FC = () => {
 
     const handleSchoolSelected = async (school_id : string | null) => {
         setLoadingUser(true);
-        const uid = currentUser?.uid;
 
         await updateUserSupportedTeam(school_id);
         Alert.alert("Succès", "Votre délégation a été mise à jour.");

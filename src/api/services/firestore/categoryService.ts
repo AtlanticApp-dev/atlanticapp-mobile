@@ -1,4 +1,4 @@
-import { collection, where, getDoc, doc, getDocs, setDoc, updateDoc, getFirestore, query, orderBy} from '@react-native-firebase/firestore';
+import { collection, getDoc, doc, getDocs, getFirestore} from '@react-native-firebase/firestore';
 const db = getFirestore();
 
 export const getCategoryFromSportIdAndId = async (sportId: any, categoryId: string) => {

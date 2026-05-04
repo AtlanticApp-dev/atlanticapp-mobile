@@ -10,7 +10,6 @@ SafeAreaView,
 KeyboardAvoidingView,
 Platform,
 } from 'react-native';
-import { sendPasswordResetEmail } from 'firebase/auth';
 import auth from '@react-native-firebase/auth';
 
 

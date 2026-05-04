@@ -1,4 +1,4 @@
-import firestore, { Filter } from "@react-native-firebase/firestore";
+import firestore from "@react-native-firebase/firestore";
 
 const atlanticupUpdateMatchStatus = async (match_id: string, status: string): Promise<void> => {
     try {

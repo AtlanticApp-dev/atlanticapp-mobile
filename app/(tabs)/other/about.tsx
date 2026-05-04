@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import Clipboard from '@react-native-clipboard/clipboard';
+import { Text, StyleSheet, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { getOtherFromId } from '@/src/api/services/firestore/othersService';
 import Markdown from 'react-native-markdown-display';
 
@@ -23,8 +21,6 @@ const AboutPage: React.FC = () => {
 
         fetchData();
     }, []);
-
-    const insets = useSafeAreaInsets();
 
     return (
         <SafeAreaView style={styles.container}>

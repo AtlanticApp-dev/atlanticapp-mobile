@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, View, Button } from 'react-native';
+import { Image, View } from 'react-native';
 import { ColorMatrix, concatColorMatrices, ColorMatrixType } from 'react-native-color-matrix-image-filters';
 
 const getDesaturationMatrix = (): ColorMatrixType => ([
@@ -20,7 +20,6 @@ interface ColoredImageProps {
 }
 
 const ColoredImage: React.FC<ColoredImageProps> = ({ color = '#00FF00', imageSource, style, containerStyle, brightness = 1 }) => {
-  const [showDesaturated, setShowDesaturated] = useState(false);
   const [r, setR] = useState(0);
   const [g, setG] = useState(0);
   const [b, setB] = useState(0);

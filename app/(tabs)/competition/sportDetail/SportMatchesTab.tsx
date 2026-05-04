@@ -17,8 +17,6 @@ const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}
     const [lastDoc, setLastDoc] = useState<any | null>(null);
     const [hasMore, setHasMore] = useState(true);
 
-    const blacklist : string[] = [];
-
     useEffect(() => {
         fetchMatches(sport_id);
     }, []);

@@ -1,5 +1,5 @@
-import React, { Component, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Dimensions, SectionList } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions, SectionList } from 'react-native';
 import { getAllRawSports } from '@/src/api/services/firestore/sportsService';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -19,9 +19,7 @@ type Sport = {
     categories?: any[];
 };
 
-const color1 = '#1A3149'
-const color2 = '#67A3C6'
-const color3 = '#ECC250'
+const color1 = '#ECC250'
 
 const CompetitionScreen: React.FC<{}> = () => {
     const [sports, setSports] = useState<any[]>([]);
@@ -132,7 +130,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 4,
-        borderColor: color3,
+        borderColor: color1,
     },
     general_ranking_image: {
         position: 'absolute',

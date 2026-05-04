@@ -14,17 +14,13 @@ const PreferencesSports = () => {
 
     const [sports, setSports] = React.useState<any[]>([]);
     const [selectedSports, setSelectedSports] = React.useState<string[]>([]);
-    const [loading, setLoading] = React.useState(true);
 
     const fetchSports = async () => {
         try {
-            setLoading(true)
             const sports = await getAllRawSports();
             setSports(sports);
-            setLoading(false);
         } catch (error) {
             console.error("Error fetching sports:", error);
-            setLoading(false);
         }
     };
 
