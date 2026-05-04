@@ -359,12 +359,7 @@ const AtlanticupMatchItem: React.FC<Props> = ({ match }) => {
         outputRange: [0, 3, 6, 3, 0],
     });
 
-    if (match){
-        return renderMatch(match, scaleInterpolation1, opacityInterpolation1, borderWidthInterpolation1);
-    }
-    else{
-        return null;
-    }
+    return renderMatch(match, scaleInterpolation1, opacityInterpolation1, borderWidthInterpolation1);
 };
 
 const styles = StyleSheet.create({

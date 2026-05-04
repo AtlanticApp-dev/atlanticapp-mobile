@@ -412,7 +412,7 @@ const MatchPage: React.FC = () => {
                     </View>
 
                     <View style={{ margin: 5, alignItems: 'flex-start' }}>
-                        {match && renderScore(match.teams[0].score)}
+                        {renderScore(match.teams[0].score)}
                     </View>
 
                     {hasNecessaryPermissions ?
@@ -433,7 +433,7 @@ const MatchPage: React.FC = () => {
                     }
 
                     <View style={{ margin: 5, alignItems: 'flex-start' }}>
-                        {match && renderScore(match.teams[1].score)}
+                        {renderScore(match.teams[1].score)}
                     </View>
                     <View style={{ width: '100%', flexDirection: 'row' }}>
                         <View style={{ flex: 1 }}>
