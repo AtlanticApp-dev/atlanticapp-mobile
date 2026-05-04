@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const initialLayout = { width: Dimensions.get('window').width };
 
 const SportDetailScreen: React.FC = () => {
-    const { sport_id, name, categoryName, categoryId} = useLocalSearchParams();
+    const { sport_id, categoryName, categoryId} = useLocalSearchParams();
     const params = useLocalSearchParams();
 
     const layout = useWindowDimensions();

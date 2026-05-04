@@ -186,11 +186,6 @@ const AtlanticupMatchItem: React.FC<Props> = ({ match }) => {
     if (!match) return null;
 
     const [image, setImage] = useState<string | null>(null);
-    const [loadedImagesCount, setLoadedImagesCount] = useState(0);
-    const [allImagesLoaded, setAllImagesLoaded] = useState(false);
-    const handleImageLoad = () => {
-        setLoadedImagesCount(prev => prev+1);
-    }
     const animatedValue1 = useRef(new Animated.Value(0)).current;
     const router = useRouter();
 

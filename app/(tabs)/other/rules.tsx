@@ -24,17 +24,13 @@ const OpenURLButton = ({url, children}: OpenURLButtonProps) => {
 
 export default function RulesScreen() {
     const [rules, setRules] = React.useState<string[]>(["", ""]);
-    const [activeFetches, setActiveFetches] = React.useState<number>(0);
 
     const fetchRulesData = async () => {
-        setActiveFetches(prev => prev + 1);
         try {
             const data = await getOtherFromId('rules');
             setRules(data || []);
         } catch (error) {
             console.error("Error fetching rules data:", error);
-        } finally {
-            setActiveFetches(prev => prev - 1);
         }
     };
 

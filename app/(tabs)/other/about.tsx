@@ -14,7 +14,6 @@ const AboutPage: React.FC = () => {
         const fetchData = async () => {
             try {
                 const data = await getOtherFromId('about');
-                console.log('data : ', data);
                 setMessage(data.message || "Aucun message disponible.");
             } catch (error) {
                 console.error("Error fetching about data:", error);
@@ -24,10 +23,6 @@ const AboutPage: React.FC = () => {
 
         fetchData();
     }, []);
-
-    const handlePress = (url: string) => {
-        Linking.openURL(url);
-    };
 
     const insets = useSafeAreaInsets();
 
