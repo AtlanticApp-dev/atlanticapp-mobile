@@ -5,11 +5,6 @@ import { useRouter } from 'expo-router';
 const { width: screenWidth } = Dimensions.get('window');
 const ANIMATION_DURATION = 100; // milliseconds for fade animation
 
-// Your custom colors
-const color1 = '#1A3149'; // You're not using this one yet, but it's defined
-const color2 = '#67A3C6'; // Blue
-const color3 = '#ECC250'; // Yellow
-
 const images = {
     'basketball': require('@/assets/images/sports/blurred_background/basketball.jpg'),
     'football': require('@/assets/images/sports/blurred_background/football.jpg'),

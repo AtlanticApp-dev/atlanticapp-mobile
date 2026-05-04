@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, SectionList } from 'react-native';
 import { getMatchesFromSportIdAndCategory } from '@/src/api/services/firestore/matchService';
 import EventCard from '@/src/components/Event/EventCard';
 import { translatePhase } from '@/src/utils/matchMetadataTranslator';
-import { fetchNextPage } from '@/src/api/services/firestore/eventsService';
 
 const ITEMS_PER_PAGE = 10;
 

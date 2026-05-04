@@ -30,7 +30,6 @@ const OpenURLButton = ({url, children}: OpenURLButtonProps) => {
 };
 
 const SportInformationsTab: React.FC<ResultsTabProps> = ({sport_id, category_id}) => {
-    const [loading, setLoading] = useState<boolean>(true);
     const [activeFetches, setActiveFetches] = useState<number>(0);
     const [sport, setSport] = useState<any>(null);
     const [category, setCategory] = useState<any>(null);

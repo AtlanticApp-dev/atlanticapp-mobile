@@ -61,7 +61,6 @@ const MatchPage: React.FC<Props> = () => {
     const [delegations, setDelegations] = useState<Array<Delegation> | null>(null);
     const [location, setLocation] = useState<any | null>(null);
     const [categoryId, setCategoryId] = useState<string | null>(null);
-    const [category, setCategory] = useState<any | null>(null);
     const [categoryName, setCategoryName] = useState<string | null>(null);
     const [dropDownMenuVisible, setDropDownMenuVisible] = useState(false);
     const [updateModalVisible, setUpdateModalVisible] = useState(false);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, Modal, TouchableOpacity, ScrollView, RefreshControl, Dimensions, TextInput, Alert } from 'react-native';
-import { Menu, Button, Provider } from 'react-native-paper';
+import { Menu, Button } from 'react-native-paper';
 import { atlanticupUpdateMatchStatus } from '@/src/api/services/atlanticupBackendFunctions';
 import { getSportFromId } from '@/src/api/services/firestore/sportsService';
 import { getUserFromUid } from '@/src/api/services/firestore/usersService';

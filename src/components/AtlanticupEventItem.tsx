@@ -5,8 +5,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Link, router} from 'expo-router';
 import ContextMenu from 'react-native-context-menu-view';
 
-const width = Dimensions.get('window').width;
-
 interface Event {
     id: string;
     kind: string;
