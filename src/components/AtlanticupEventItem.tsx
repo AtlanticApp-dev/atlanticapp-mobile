@@ -28,7 +28,6 @@ interface Props {
 }
 
 interface State {
-    image: string | null;
     isSubscribed?: boolean;
     isOrganizer?: boolean;
 }
@@ -38,9 +37,7 @@ class AtlanticupEventItem extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {
-            image: null,
-        };
+        this.state = { };
         this.animatedValue1 = new Animated.Value(0);
     }
 
