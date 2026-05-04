@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Dimensions, RefreshControl, Image, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Dimensions, RefreshControl, ScrollView } from 'react-native';
 import { getFinalRankingFromSportIdAndCategoryId, getGroupRankingsBySportIdAndCategory } from '@/src/api/services/firestore/rankingService';
 import GroupRanking from '@/src/components/Competition/GroupRanking';
 import FinalRanking from '@/src/components/Competition/FinalRanking';
 import { getCategoryFromSportIdAndId } from '@/src/api/services/firestore/categoryService';
-
-const width = Dimensions.get('window').width;
 
 interface ResultsTabProps {
     sport_id: any;

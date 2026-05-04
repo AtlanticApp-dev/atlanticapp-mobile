@@ -4,7 +4,6 @@ import { useRoute } from '@react-navigation/native';
 import { fetchNextPage } from '@/src/api/services/firestore/eventsService';
 import EventCard from '@/src/components/Event/EventCard';
 import { getPlaceFromId } from '@/src/api/services/firestore/placeService';
-import { StatusBar } from 'expo-status-bar';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -16,7 +15,6 @@ const PlaceDetail: React.FC<any> = () => {
   const [hasMore, setHasMore] = useState(true);
   const [lastDoc, setLastDoc] = useState<any>(null);
   const [place, setPlace] = useState<any>(null);
-  const [loadingPlace, setLoadingPlace] = useState(false);
   const [descriptionTextExpanded, setDescriptionTextExpanded] = useState(false);
 
   const blackList = ['completed', 'cancelled'];
@@ -58,7 +56,7 @@ const PlaceDetail: React.FC<any> = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.placeTitle}>{loadingPlace ? "Chargement..." : place?.title}</Text>
+                <Text style={styles.placeTitle}>{place?.title}</Text>
                 {place?.description && (
                     <View style={styles.descriptionContainer}>
                         <ScrollView contentInsetAdjustmentBehavior='automatic'>

@@ -1,5 +1,4 @@
-import { collection, where, getDoc, doc, getDocs, setDoc, updateDoc, getFirestore, query} from '@react-native-firebase/firestore';
-import messaging from '@react-native-firebase/messaging';
+import { getDoc, doc, setDoc, updateDoc, getFirestore} from '@react-native-firebase/firestore';
 import { subscribeToDelegation, subscribeToSports } from '../messaging/fcmService';
 import auth from '@react-native-firebase/auth';
 import { setLocalSupportedSports } from '../storage/supportedSportsService';

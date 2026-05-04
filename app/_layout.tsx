@@ -1,14 +1,13 @@
 import { useFonts } from 'expo-font';
-import { Stack , useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState} from 'react';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/src/hooks/useColorScheme';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import {PermissionsAndroid, Alert, AppRegistry} from 'react-native';
+import { Alert } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider } from 'react-native-paper';
@@ -19,12 +18,9 @@ import { PaperProvider } from 'react-native-paper';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('@/assets/fonts/SpaceMono-Regular.ttf'),
   });
-  const [checking, setChecking] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {

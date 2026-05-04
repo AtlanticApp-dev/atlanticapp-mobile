@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { getPlaceFromId } from '@/src/api/services/firestore/placeService';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { useRouter } from 'expo-router';
+
 interface Props {
     item: {
         id: string;

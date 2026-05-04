@@ -1,6 +1,6 @@
 import { EnrichedDelegation } from '@/types/enrichedModels';
 import { RawDelegation } from '@/types/rawModels';
-import { collection, where, getDoc, doc, getDocs, setDoc, updateDoc, getFirestore, query, orderBy} from '@react-native-firebase/firestore';
+import { collection, getDoc, doc, getDocs, getFirestore, query, orderBy} from '@react-native-firebase/firestore';
 
 
 const db = getFirestore();

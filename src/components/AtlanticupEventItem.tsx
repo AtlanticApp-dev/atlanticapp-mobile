@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image, Animated, Easing, Pressable} from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Animated, Easing, Pressable} from 'react-native';
 import { getSportFromId } from '@/src/api/services/firestore/sportsService';
 import LinearGradient from 'react-native-linear-gradient';
-import { Link, router} from 'expo-router';
+import { router } from 'expo-router';
 import ContextMenu from 'react-native-context-menu-view';
 
 interface Event {
@@ -110,7 +110,6 @@ class AtlanticupEventItem extends React.Component<Props, State> {
 
     render() {
         const { event } = this.props;
-        const start_time = new Date(event.start_time);
 
         const scaleInterpolation1 = this.animatedValue1.interpolate({
             inputRange: [0, 0.5, 1],

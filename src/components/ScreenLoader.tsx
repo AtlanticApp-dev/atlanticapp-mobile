@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, StyleSheet, View, Image, Dimensions, Easing } from 'react-native';
+import { Animated, StyleSheet, View, Dimensions, Easing } from 'react-native';
 
 const images = [
     require('@/assets/images/emojis/basketball.png'),
@@ -112,7 +112,6 @@ class ScreenLoader extends React.Component<{}, ScreenLoaderState> {
     }
 
     render() {
-        const { width, height } = Dimensions.get('window');
         const rotateInterpolate = this.rotateAnim.interpolate({
             inputRange: [0, 1, 2],
             outputRange: ['0deg', '360deg', '720deg'],
@@ -135,8 +134,6 @@ class ScreenLoader extends React.Component<{}, ScreenLoaderState> {
         );
     }
 }
-
-const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     container: {
