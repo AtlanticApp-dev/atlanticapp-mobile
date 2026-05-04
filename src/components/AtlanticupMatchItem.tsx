@@ -232,7 +232,7 @@ const AtlanticupMatchItem: React.FC<Props> = ({ match }) => {
 
         if (matchType === 'type3') {
             const start_time = new Date(match.start_time);
-            return <Type3Match match={match} router={router} dayOfWeek={getDayOfWeek(start_time)} start_time={start_time} sport_image={image} />
+            return <Type3Match match={match} router={router} dayOfWeek={getDayOfWeek(start_time)} start_time={start_time} sport_image={image} />;
         }
 
         else if (matchType === 'type2') {

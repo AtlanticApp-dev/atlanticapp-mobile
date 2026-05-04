@@ -74,7 +74,7 @@ const SchoolPicker: React.FC<SchoolPickerProps> = (props) => {
                         style={{flex:1, width: '100%', height: '100%', resizeMode: 'contain'}} />
                 </View>
             </View>
-        )
+        );
     }
 
     return (

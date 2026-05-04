@@ -103,7 +103,7 @@ const GeneralRankingScreen: React.FC = () => {
                     </View>
                 </ScrollView>
             </SafeAreaView>
-        )
+        );
     }
 
     return (

@@ -39,7 +39,7 @@ const PlaceDetail: React.FC<any> = () => {
         setLastDoc(null);
         setHasMore(true);
         loadEvents();
-    }
+    };
 
     const loadPlace = async () => {
       try {

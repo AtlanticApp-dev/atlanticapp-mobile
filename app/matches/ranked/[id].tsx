@@ -214,7 +214,7 @@ const MatchPage: React.FC<Props> = () => {
         else{
             console.warn('Sport introuvable');
         }
-    }
+    };
 
     const renderTeam = (team, index:number) => {
         const delegation = delegations?.find(d => d.id === team.delegation_id);

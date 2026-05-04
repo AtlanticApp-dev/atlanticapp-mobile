@@ -100,7 +100,7 @@ const MatchPage: React.FC = () => {
         } catch (error) {
             console.error('Error submitting array scores:', error);
         }
-    }
+    };
 
     const updateScore = async () => {
         try {
@@ -127,13 +127,13 @@ const MatchPage: React.FC = () => {
         setActiveFetches(prev => prev + 2);
         team1_id ? await getTeamFromId(team1_id).then(newTeam1 => {setTeam1(newTeam1); setActiveFetches(prev => prev - 1)}) : (setTeam1(null), setActiveFetches(prev => prev - 1));
         team2_id ? await getTeamFromId(team2_id).then(newTeam2 => {setTeam2(newTeam2); setActiveFetches(prev => prev - 1)}) : (setTeam2(null), setActiveFetches(prev => prev - 1));
-    }
+    };
 
     const fetchDelegations = async (delegation1_id : string, delegation2_id : string) => {
         setActiveFetches(prev => prev + 2);
         getDelegationFromId(delegation1_id).then(delegation => {setDelegation1(delegation); setActiveFetches(prev => prev - 1)});
         getDelegationFromId(delegation2_id).then(delegation => {setDelegation2(delegation); setActiveFetches(prev => prev - 1)});
-    }
+    };
 
     const fetchLocation = async (place_id : string | null) => {
         setActiveFetches(prev => prev + 1);
@@ -236,7 +236,7 @@ const MatchPage: React.FC = () => {
         else{
             console.warn('Sport introuvable');
         }
-    }
+    };
 
     const renderScore = (score: number | array) => {
         return (
