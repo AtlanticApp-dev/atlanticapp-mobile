@@ -1,4 +1,4 @@
-import { getFirestore, collection, getDocs, doc, getDoc, deleteDoc, addDoc, updateDoc, query, limit, orderBy, startAfter, where } from "@react-native-firebase/firestore";
+import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, query, limit, orderBy, startAfter, where } from "@react-native-firebase/firestore";
 
 const db = getFirestore();
 

@@ -44,7 +44,7 @@ const EventPage: React.FC = () => {
         else{
             console.warn('event_id is not a string');
         }
-    }
+    };
 
     const redirectToMap = () => {
         // router.push('Carte', { redirect_to_place_id: event?.place_id });

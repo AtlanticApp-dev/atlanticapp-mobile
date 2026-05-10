@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, RefreshControl } from 'react-native';
+import { View, StyleSheet, RefreshControl } from 'react-native';
 import { getAllAnnouncements } from '@/src/api/services/firestore/announcementsService';
 import { FlatList } from 'react-native-gesture-handler';
 import { useRouter } from 'expo-router';

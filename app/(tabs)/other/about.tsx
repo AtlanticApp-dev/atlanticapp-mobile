@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import Clipboard from '@react-native-clipboard/clipboard';
+import { Text, StyleSheet, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { getOtherFromId } from '@/src/api/services/firestore/othersService';
 import Markdown from 'react-native-markdown-display';
 
@@ -14,7 +12,6 @@ const AboutPage: React.FC = () => {
         const fetchData = async () => {
             try {
                 const data = await getOtherFromId('about');
-                console.log('data : ', data);
                 setMessage(data.message || "Aucun message disponible.");
             } catch (error) {
                 console.error("Error fetching about data:", error);
@@ -24,12 +21,6 @@ const AboutPage: React.FC = () => {
 
         fetchData();
     }, []);
-
-    const handlePress = (url: string) => {
-        Linking.openURL(url);
-    };
-
-    const insets = useSafeAreaInsets();
 
     return (
         <SafeAreaView style={styles.container}>

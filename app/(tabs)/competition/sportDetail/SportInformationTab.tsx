@@ -1,9 +1,7 @@
 import { getCategoryFromSportIdAndId } from '@/src/api/services/firestore/categoryService';
 import { getSportFromId } from '@/src/api/services/firestore/sportsService';
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Dimensions, RefreshControl, Image, ScrollView, Linking, Alert, Button } from 'react-native';
-
-const width = Dimensions.get('window').width;
+import { View, StyleSheet, Dimensions, RefreshControl, Image, ScrollView, Linking, Alert, Button } from 'react-native';
 
 interface ResultsTabProps {
     sport_id: any;
@@ -30,7 +28,6 @@ const OpenURLButton = ({url, children}: OpenURLButtonProps) => {
 };
 
 const SportInformationsTab: React.FC<ResultsTabProps> = ({sport_id, category_id}) => {
-    const [loading, setLoading] = useState<boolean>(true);
     const [activeFetches, setActiveFetches] = useState<number>(0);
     const [sport, setSport] = useState<any>(null);
     const [category, setCategory] = useState<any>(null);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, Animated, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
 
 const ScrollingText = ({ text, speed = 30, containerWidth, spacing = 20 }) => {
   const [contentWidth, setContentWidth] = useState(0);

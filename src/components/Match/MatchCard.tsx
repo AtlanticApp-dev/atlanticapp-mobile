@@ -1,5 +1,4 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import HeadToHeadMatchCard from './HeadToHeadMatchCard';
 import RankedMatchCard from './RankedMatchCard';
 

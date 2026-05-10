@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Stack } from 'expo-router';
 
 const AuthLayout: React.FC = () => {
@@ -10,12 +10,5 @@ const AuthLayout: React.FC = () => {
         </Stack>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-});
 
 export default AuthLayout;

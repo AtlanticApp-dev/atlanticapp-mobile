@@ -1,18 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, Dimensions, StyleSheet, useWindowDimensions } from 'react-native';
-import { TabView, SceneMap, TabBar} from 'react-native-tab-view';
+import React, { useState } from 'react';
+import { Dimensions, StyleSheet, useWindowDimensions } from 'react-native';
+import { TabView, SceneMap } from 'react-native-tab-view';
 import { useLocalSearchParams } from 'expo-router';
 
 import ResultsTab from './ResultsTab';
 import SportMatchesTab from './SportMatchesTab';
 import SportInformationsTab from './SportInformationTab';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-const initialLayout = { width: Dimensions.get('window').width };
 
 const SportDetailScreen: React.FC = () => {
-    const { sport_id, name, categoryName, categoryId} = useLocalSearchParams();
-    const params = useLocalSearchParams();
+    const { sport_id, categoryId} = useLocalSearchParams();
 
     const layout = useWindowDimensions();
     const [index, setIndex] = useState(0);
@@ -41,7 +37,5 @@ const SportDetailScreen: React.FC = () => {
         </TabView>
     );
 };
-
-const styles = StyleSheet.create({});
 
 export default SportDetailScreen;

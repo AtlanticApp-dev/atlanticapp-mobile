@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Modal, TouchableWithoutFeedback, ScrollView, Alert, Touchable } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Modal, TouchableWithoutFeedback, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlatList } from 'react-native-gesture-handler';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
@@ -44,7 +44,6 @@ const ProfileScreen: React.FC = () => {
     const [announcements, setAnnouncements] = useState<Announcement[]>([]);
     const [loadingAnnouncements, setLoadingAnnouncements] = useState<boolean>(false);
     const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
-    const [selectedTeamColor, setSelectedTeamColor] = useState<string | null>(null);
     const [selectedSports, setSelectedSports] = useState<string[]>([]);
     const [loadingUser, setLoadingUser] = useState<boolean>(false);
     const [sports, setSports] = useState<Sport[]>([]);
@@ -142,7 +141,6 @@ const ProfileScreen: React.FC = () => {
 
     const handleSchoolSelected = async (school_id : string | null) => {
         setLoadingUser(true);
-        const uid = currentUser?.uid;
 
         await updateUserSupportedTeam(school_id);
         Alert.alert("Succès", "Votre délégation a été mise à jour.");

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, Modal, TouchableOpacity, ScrollView, RefreshControl, Dimensions, TextInput, Alert } from 'react-native';
-import { Menu, Button, Provider } from 'react-native-paper';
+import { Menu, Button } from 'react-native-paper';
 import { atlanticupUpdateMatchStatus } from '@/src/api/services/atlanticupBackendFunctions';
 import { getSportFromId } from '@/src/api/services/firestore/sportsService';
 import { getUserFromUid } from '@/src/api/services/firestore/usersService';
@@ -100,7 +100,7 @@ const MatchPage: React.FC = () => {
         } catch (error) {
             console.error('Error submitting array scores:', error);
         }
-    }
+    };
 
     const updateScore = async () => {
         try {
@@ -127,13 +127,13 @@ const MatchPage: React.FC = () => {
         setActiveFetches(prev => prev + 2);
         team1_id ? await getTeamFromId(team1_id).then(newTeam1 => {setTeam1(newTeam1); setActiveFetches(prev => prev - 1)}) : (setTeam1(null), setActiveFetches(prev => prev - 1));
         team2_id ? await getTeamFromId(team2_id).then(newTeam2 => {setTeam2(newTeam2); setActiveFetches(prev => prev - 1)}) : (setTeam2(null), setActiveFetches(prev => prev - 1));
-    }
+    };
 
     const fetchDelegations = async (delegation1_id : string, delegation2_id : string) => {
         setActiveFetches(prev => prev + 2);
         getDelegationFromId(delegation1_id).then(delegation => {setDelegation1(delegation); setActiveFetches(prev => prev - 1)});
         getDelegationFromId(delegation2_id).then(delegation => {setDelegation2(delegation); setActiveFetches(prev => prev - 1)});
-    }
+    };
 
     const fetchLocation = async (place_id : string | null) => {
         setActiveFetches(prev => prev + 1);
@@ -236,7 +236,7 @@ const MatchPage: React.FC = () => {
         else{
             console.warn('Sport introuvable');
         }
-    }
+    };
 
     const renderScore = (score: number | array) => {
         return (
@@ -412,7 +412,7 @@ const MatchPage: React.FC = () => {
                     </View>
 
                     <View style={{ margin: 5, alignItems: 'flex-start' }}>
-                        {match && renderScore(match.teams[0].score)}
+                        {renderScore(match.teams[0].score)}
                     </View>
 
                     {hasNecessaryPermissions ?
@@ -433,7 +433,7 @@ const MatchPage: React.FC = () => {
                     }
 
                     <View style={{ margin: 5, alignItems: 'flex-start' }}>
-                        {match && renderScore(match.teams[1].score)}
+                        {renderScore(match.teams[1].score)}
                     </View>
                     <View style={{ width: '100%', flexDirection: 'row' }}>
                         <View style={{ flex: 1 }}>

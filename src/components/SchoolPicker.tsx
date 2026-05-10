@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, Animated, TouchableOpacity, Image} from 'react-native';
+import { View, StyleSheet, Text, Animated, Image} from 'react-native';
 import { Easing } from 'react-native-reanimated';
 
 
@@ -23,7 +23,6 @@ const SchoolPicker: React.FC<SchoolPickerProps> = (props) => {
         require('@/assets/images/schools/logo_enib.png'),
     ];
     const length = data.length;
-    const duration = 1500; // Set transition duration
     const opacity = [];
     const selectedSchoolImage = props.selectedSchoolImage ? { uri: props.selectedSchoolImage } : data[0];
 
@@ -74,7 +73,7 @@ const SchoolPicker: React.FC<SchoolPickerProps> = (props) => {
                         style={{flex:1, width: '100%', height: '100%', resizeMode: 'contain'}} />
                 </View>
             </View>
-        )
+        );
     }
 
     return (

@@ -36,7 +36,6 @@ const DelegationItem: React.FC<{ item: Delegation, index: number }> = ({ item, i
 const GeneralRankingScreen: React.FC = () => {
     const [rawRanking, setRawRanking] = useState<RawGeneralRanking>();
     const [formattedRanking, setFormattedRanking] = useState<GeneralRanking>();
-    const [ranking, setRanking] = useState<Delegation[]>([]);
     const [delegations, setDelegations] = useState<Delegation[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -103,7 +102,7 @@ const GeneralRankingScreen: React.FC = () => {
                     </View>
                 </ScrollView>
             </SafeAreaView>
-        )
+        );
     }
 
     return (

@@ -1,11 +1,9 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image, Animated, Easing, Pressable} from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Animated, Easing, Pressable} from 'react-native';
 import { getSportFromId } from '@/src/api/services/firestore/sportsService';
 import LinearGradient from 'react-native-linear-gradient';
-import { Link, router} from 'expo-router';
+import { router } from 'expo-router';
 import ContextMenu from 'react-native-context-menu-view';
-
-const width = Dimensions.get('window').width;
 
 interface Event {
     id: string;
@@ -30,7 +28,6 @@ interface Props {
 }
 
 interface State {
-    image: string | null;
     isSubscribed?: boolean;
     isOrganizer?: boolean;
 }
@@ -40,9 +37,7 @@ class AtlanticupEventItem extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
-        this.state = {
-            image: null,
-        };
+        this.state = { };
         this.animatedValue1 = new Animated.Value(0);
     }
 
@@ -115,7 +110,6 @@ class AtlanticupEventItem extends React.Component<Props, State> {
 
     render() {
         const { event } = this.props;
-        const start_time = new Date(event.start_time);
 
         const scaleInterpolation1 = this.animatedValue1.interpolate({
             inputRange: [0, 0.5, 1],

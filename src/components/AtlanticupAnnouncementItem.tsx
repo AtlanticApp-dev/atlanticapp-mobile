@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { getPlaceFromId } from '@/src/api/services/firestore/placeService';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { useRouter } from 'expo-router';
+
 interface Props {
     item: {
         id: string;
@@ -22,7 +22,6 @@ interface State {
         time_sent: string;
         place_id: string | null;
     };
-    loading: boolean;
     place: any;
     noPlace: boolean;
 }
@@ -32,7 +31,6 @@ class AtlanticupAnnouncementItem extends React.Component<Props, State> {
         super(props);
         this.state = {
             announcement : this.props.item,
-            loading:false,
             place : null,
             noPlace : true,
         };
@@ -40,22 +38,20 @@ class AtlanticupAnnouncementItem extends React.Component<Props, State> {
 
 
     fetchPlace = async () =>{
-        this.setState({loading:true});
         try{
             if (!this.state.announcement.place_id){
-                this.setState({loading:false, noPlace:true});
+                this.setState({noPlace:true});
                 return;
             }
             const place = await getPlaceFromId(this.state.announcement.place_id);
             this.setState({
                 place: place,
                 noPlace:false,
-                loading:false,
             })
         }
         catch(error){
             console.log(error);
-            this.setState({loading:false, noPlace:true});
+            this.setState({noPlace:true});
         }
     }
 

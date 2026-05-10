@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, SectionList } from 'react-native';
 import { getMatchesFromSportIdAndCategory } from '@/src/api/services/firestore/matchService';
 import EventCard from '@/src/components/Event/EventCard';
 import { translatePhase } from '@/src/utils/matchMetadataTranslator';
-import { fetchNextPage } from '@/src/api/services/firestore/eventsService';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -17,8 +16,6 @@ const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}
     const [refreshing, setRefreshing] = useState(false);
     const [lastDoc, setLastDoc] = useState<any | null>(null);
     const [hasMore, setHasMore] = useState(true);
-
-    const blacklist : string[] = [];
 
     useEffect(() => {
         fetchMatches(sport_id);

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, Modal, TouchableOpacity, TouchableWithoutFeedback, ScrollView, RefreshControl, Dimensions, Alert } from 'react-native';
-import { Menu, Button, Provider } from 'react-native-paper';
+import { Menu, Button } from 'react-native-paper';
 import { getSportFromId } from '@/src/api/services/firestore/sportsService';
 import { getUserFromUid } from '@/src/api/services/firestore/usersService';
-import { getMatchFromId, updateRankedMatchRanking, updateRankedMatchScore } from '@/src/api/services/firestore/matchService';
+import { getMatchFromId, updateRankedMatchRanking } from '@/src/api/services/firestore/matchService';
 import { getTeamFromId } from '@/src/api/services/firestore/teamsService';
 import { getDelegationFromId } from '@/src/api/services/firestore/delegationService';
 import { getPlaceFromId } from '@/src/api/services/firestore/placeService';
@@ -15,8 +15,6 @@ import { translatePhase, translateStatus } from '@/src/utils/matchMetadataTransl
 import { atlanticupUpdateMatchStatus } from '@/src/api/services/atlanticupBackendFunctions';
 import { FlatList } from 'react-native-gesture-handler';
 import DraggableFlatList from 'react-native-draggable-flatlist';
-
-const width = Dimensions.get('window').width;
 
 interface Props {
 }
@@ -61,7 +59,6 @@ const MatchPage: React.FC<Props> = () => {
     const [delegations, setDelegations] = useState<Array<Delegation> | null>(null);
     const [location, setLocation] = useState<any | null>(null);
     const [categoryId, setCategoryId] = useState<string | null>(null);
-    const [category, setCategory] = useState<any | null>(null);
     const [categoryName, setCategoryName] = useState<string | null>(null);
     const [dropDownMenuVisible, setDropDownMenuVisible] = useState(false);
     const [updateModalVisible, setUpdateModalVisible] = useState(false);
@@ -134,11 +131,6 @@ const MatchPage: React.FC<Props> = () => {
         setActiveFetches(prev => prev + 1);
         place_id ? await getPlaceFromId(place_id).then(location => {setLocation(location); setActiveFetches(prev => prev - 1)}) : (setLocation(null), setActiveFetches(prev => prev - 1));
     };
-
-    const onRefresh = useCallback(() => {
-        checkPermissions();
-        fetchMatch(match_id);
-    }, []);
 
     useEffect(() => {
         checkPermissions();
@@ -215,7 +207,7 @@ const MatchPage: React.FC<Props> = () => {
         else{
             console.warn('Sport introuvable');
         }
-    }
+    };
 
     const renderTeam = (team, index:number) => {
         const delegation = delegations?.find(d => d.id === team.delegation_id);
