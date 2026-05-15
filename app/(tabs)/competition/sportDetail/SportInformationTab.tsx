@@ -1,7 +1,7 @@
 import { getCategoryFromSportIdAndId } from '@/src/api/services/firestore/categoryService';
 import { getSportFromId } from '@/src/api/services/firestore/sportsService';
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet, Dimensions, RefreshControl, Image, ScrollView, Linking, Alert, Button } from 'react-native';
+import { View, StyleSheet, RefreshControl, ScrollView, Linking, Alert, Button } from 'react-native';
 
 interface ResultsTabProps {
     sport_id: any;

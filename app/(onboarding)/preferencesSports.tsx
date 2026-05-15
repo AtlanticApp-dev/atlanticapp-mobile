@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList} from 'react-native';
@@ -6,7 +5,6 @@ import { Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getAllRawSports } from '@/src/api/services/firestore/sportsService';
 import { getAuth } from '@react-native-firebase/auth';
-import { updateUser } from '@/src/api/services/firestore/usersService';
 
 const PreferencesSports = () => {
 

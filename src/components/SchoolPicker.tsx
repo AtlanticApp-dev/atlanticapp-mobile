@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, Animated, Image} from 'react-native';
+import { View, StyleSheet, Animated, Image} from 'react-native';
 import { Easing } from 'react-native-reanimated';
 
 

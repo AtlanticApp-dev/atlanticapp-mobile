@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, RefreshControl, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, RefreshControl, ScrollView } from 'react-native';
 import { getFinalRankingFromSportIdAndCategoryId, getGroupRankingsBySportIdAndCategory } from '@/src/api/services/firestore/rankingService';
 import GroupRanking from '@/src/components/Competition/GroupRanking';
 import FinalRanking from '@/src/components/Competition/FinalRanking';

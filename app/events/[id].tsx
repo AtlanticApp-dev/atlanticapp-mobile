@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { atlanticupGetPlaceFromId, atlanticupGetEventFromId} from '@/src/api/services/atlanticupBackendFunctions';
 import LinearGradient from 'react-native-linear-gradient';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 
 interface Event {
     title: string;
@@ -18,7 +18,6 @@ interface Location {
 const EventPage: React.FC = () => {
     const [event, setEvent] = useState<Event | null>(null);
     const [location, setLocation] = useState<Location | null>(null);
-    const router = useRouter();
     const {event_id} = useLocalSearchParams();
 
     useEffect(() => {

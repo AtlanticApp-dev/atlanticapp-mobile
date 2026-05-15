@@ -7,7 +7,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import SchoolPicker from '@/src/components/SchoolPicker';
 import { getAllDelegations } from '@/src/api/services/firestore/delegationService';
 import { getAuth } from '@react-native-firebase/auth';
-import { updateUser } from '@/src/api/services/firestore/usersService';
 
 const width = Dimensions.get('window').width;
 
