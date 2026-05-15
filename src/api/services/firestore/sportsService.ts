@@ -1,4 +1,4 @@
-import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, query, orderBy } from "@react-native-firebase/firestore";
+import { getFirestore, collection, getDocs, doc, getDoc, query, orderBy } from "@react-native-firebase/firestore";
 import { RawSport } from "@/types/rawModels";
 import { EnrichedSport } from "@/types/enrichedModels";
 

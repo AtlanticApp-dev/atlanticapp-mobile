@@ -1,4 +1,4 @@
-import { getFirestore, collection, getDocs, query, limit, orderBy, startAfter, where, or} from "@react-native-firebase/firestore";
+import { getFirestore, collection, getDocs, query, limit, orderBy, startAfter, where } from "@react-native-firebase/firestore";
 import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 
 const db = getFirestore();

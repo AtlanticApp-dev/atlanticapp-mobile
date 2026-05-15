@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, Modal, TouchableOpacity, TouchableWithoutFeedback, ScrollView, RefreshControl, Dimensions, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Image, Modal, TouchableOpacity, Alert } from 'react-native';
 import { Menu, Button } from 'react-native-paper';
 import { getSportFromId } from '@/src/api/services/firestore/sportsService';
 import { getUserFromUid } from '@/src/api/services/firestore/usersService';
