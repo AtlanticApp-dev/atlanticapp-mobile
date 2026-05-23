@@ -56,9 +56,17 @@ export default function RootLayout() {
         }
       });
 
-    checkNotificationPermission();
-    //TODO: utiliser le vrai uid de l'utilisateur actuellement connecté
-    getFcmToken('');
+    const initializeNotifications = async () => {
+      try {
+        await checkNotificationPermission();
+        //TODO: utiliser le vrai uid de l'utilisateur actuellement connecté
+        await getFcmToken('');
+      } catch (error) {
+        console.error('Error initializing notifications:', error);
+      }
+    }
+     
+    initializeNotifications();
 
     return () => {
       unsubscribe();
