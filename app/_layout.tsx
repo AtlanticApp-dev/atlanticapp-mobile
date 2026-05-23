@@ -13,9 +13,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider } from 'react-native-paper';
 import { checkNotificationPermission, getFcmToken, saveFcmToken } from '@/src/api/services/messaging/fcmService';
 
-//TODO : demander la permission de recevoir des notifications dans l'onboarding une fois créé (déplacer cette ligne dans le bon composant)
-PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)
-
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -36,7 +33,7 @@ export default function RootLayout() {
       }
     });
 
-    const unsubscribeTokenFefresh = messaging().onTokenRefresh(newToken => {
+    const unsubscribeTokenRefresh = messaging().onTokenRefresh(newToken => {
       //TODO: utiliser le vrai uid de l'utilisateur actuellement connecté
       saveFcmToken('', newToken);
     })
@@ -60,11 +57,12 @@ export default function RootLayout() {
       });
 
     checkNotificationPermission();
+    //TODO: utiliser le vrai uid de l'utilisateur actuellement connecté
     getFcmToken('');
 
     return () => {
       unsubscribe();
-      unsubscribeTokenFefresh();
+      unsubscribeTokenRefresh();
     };
   }, []);
 

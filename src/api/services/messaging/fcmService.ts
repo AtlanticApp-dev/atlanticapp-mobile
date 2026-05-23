@@ -4,10 +4,11 @@ import auth from '@react-native-firebase/auth';
 import { getUserFromUid, updateUser } from '../firestore/usersService';
 import { getAllRawSports } from '../firestore/sportsService';
 import { getAllDelegations } from '../firestore/delegationService';
-import { Platform } from 'react-native';
+import { PermissionsAndroid, Platform } from 'react-native';
 
 export const saveFcmToken = async (uid: string, fcmToken: string): Promise<void> => {
-  return;  
+  return;
+  //TODO: utiliser le vrai uid de l'utilisateur actuellement connecté et l'enregistrer dans la collection users de Firestore
   await firestore().collection('users').doc(uid).set({
         fcmToken,
         createdAt: firestore.FieldValue.serverTimestamp()
@@ -25,16 +26,38 @@ export const getFcmToken = async (uid: string) => {
   return token;
 }
 
-export const checkNotificationPermission = async () => {
+export const iOSPermissionRequest = async () => {
   const authStatus = await messaging().requestPermission();
   const enabled =
     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    console.log('Notification permission enabled');
+    console.log('Authorization status:', authStatus);
   } else {
-    console.log('Notification permission NOT enabled');
+    console.log('Notification permission denied');
+  }
+}
+
+export const androidPermissionRequest = async () => {
+  //TODO : demander la permission de recevoir des notifications dans l'onboarding une fois créé (déplacer cette ligne dans le bon composant)
+  const authStatus = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+  const enabled = (authStatus === PermissionsAndroid.RESULTS.GRANTED);
+
+  if (enabled) {
+    console.log('Notification permission granted');
+  } else {
+    console.log('Notification permission denied');
+  }
+}
+
+export const checkNotificationPermission = async () => {
+  if (Platform.OS === 'ios') {
+    await iOSPermissionRequest();
+  } else if (Platform.OS === 'android') {
+    await androidPermissionRequest();
+  } else {
+    console.log('Unsupported platform for notification permissions : ', Platform.OS);
   }
 }
 
