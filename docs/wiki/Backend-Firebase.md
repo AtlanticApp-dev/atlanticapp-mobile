@@ -62,13 +62,13 @@ Voici la structure complète des données dans Firestore pour AtlanticApp :
 ```mermaid
 erDiagram
     %% ============ COLLECTIONS ============
-    
+
     %% Collection: matches
     matches {
         string id PK "ID unique du match"
         string sport_id FK "ID du sport"
         string category_id FK "ID de la catégorie"
-        string place_id FK__ "ID du lieu (nullable)"
+        string place_id FK "ID du lieu (nullable)"
         datetime start_time "Date/heure de début"
         string status "Statut: scheduled/ongoing/completed/cancelled"
         string kind "Type: head_to_head/ranked"
@@ -76,23 +76,23 @@ erDiagram
         string description "Description"
         string team1_id FK "ID équipe 1"
         string team2_id FK "ID équipe 2"
-        int team1_score__ "Score équipe 1 (nullable)"
-        int team2_score__ "Score équipe 2 (nullable)"
+        int team1_score "Score équipe 1 (nullable)"
+        int team2_score "Score équipe 2 (nullable)"
         string[] delegations_id "IDs des délégations participantes"
         array teams "Tableau d'équipes avec détails et scores"
     }
-    
+
     %% Collection: users
     users {
         string id PK "ID Firebase Auth"
         string email "Email de l'utilisateur"
-        string supported_delegation FK__ "ID de la délégation soutenue (nullable)"
+        string supported_delegation FK "ID de la délégation soutenue (nullable)"
         string[] followed_sports FK "IDs des sports suivis"
         string[] fcm_tokens "Liste des tokens FCM"
         datetime createdAt "Date de création"
         datetime last_login "Dernière connexion"
     }
-    
+
     %% Collection: delegations
     delegations {
         string id PK "ID unique"
@@ -104,7 +104,7 @@ erDiagram
         int points "Points totaux"
         int ranking "Classement"
     }
-    
+
     %% Collection: sports
     sports {
         string id PK "ID unique"
@@ -114,7 +114,7 @@ erDiagram
         string description "Description"
         int order "Ordre d'affichage"
     }
-    
+
     %% Collection: teams
     teams {
         string id PK "ID unique"
@@ -123,7 +123,7 @@ erDiagram
         int score "Score"
         string[] athletes "Liste des athlètes"
     }
-    
+
     %% Collection: places
     places {
         string id PK "ID unique"
@@ -132,7 +132,7 @@ erDiagram
         object location "Coordinates (lat, lng)"
         string address "Adresse"
     }
-    
+
     %% Collection: categories
     categories {
         string id PK "ID unique"
@@ -140,7 +140,7 @@ erDiagram
         string description "Description"
         int order "Ordre d'affichage"
     }
-    
+
     %% Collection: announcements
     announcements {
         string id PK "ID unique"
@@ -151,25 +151,25 @@ erDiagram
         string[] delegations_id "Délégations concernées (nullable)"
         string[] sports_id "Sports concernés (nullable)"
     }
-    
+
     %% Collection: ranking
     ranking {
         string id PK "ID unique"
         string type "Type: general/sport/category"
-        string reference_id FK__ "ID de référence (sport_id/category_id)"
+        string reference_id FK "ID de référence (sport_id/category_id)"
         array teams "Classement des équipes"
         datetime updatedAt "Date de mise à jour"
     }
-    
+
     %% ============ RELATIONS ============
     matches ||--o{ delegations : "array-contains"
     matches ||--|| sports : "belongs-to"
     matches ||--|| categories : "belongs-to"
-    matches ||--|| places : "belongs-to (nullable)"
+    matches o|--|| places : "belongs-to (nullable)"
     matches ||--o{ teams : "contains"
-    
+
     teams ||--|| delegations : "belongs-to"
-    users ||--|| delegations : "supports (nullable)"
+    users o|--|| delegations : "supports (nullable)"
     users ||--o{ sports : "follows"
     sports ||--|| categories : "belongs-to"
 ```

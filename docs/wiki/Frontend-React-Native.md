@@ -29,8 +29,8 @@ graph TD
     A --> C[Layouts]
     A --> D[+not-found.tsx]
     
-    B --> E[(tabs)/]
-    B --> F[(onboarding)/]
+    B --> E["(tabs)/"]
+    B --> F["(onboarding)/"]
     B --> G[auth/]
     B --> H[matches/]
     B --> I[events/]

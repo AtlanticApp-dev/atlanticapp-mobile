@@ -428,11 +428,11 @@ graph TD
     B --> C[SafeAreaProvider]
     C --> D[Stack Navigator]
     
-    D --> E[app/(tabs)/_layout.tsx]
-    D --> F[app/(onboarding)/_layout.tsx]
-    D --> G[app/auth/_layout.tsx]
-    D --> H[app/matches/_layout.tsx]
-    D --> I[app/events/_layout.tsx]
+    D --> E["app/(tabs)/_layout.tsx"]
+    D --> F["app/(onboarding)/_layout.tsx"]
+    D --> G["app/auth/_layout.tsx"]
+    D --> H["app/matches/_layout.tsx"]
+    D --> I["app/events/_layout.tsx"]
     
     E --> J[Tab Navigator]
     J --> K[calendar.tsx\n📅 Calendrier]
@@ -485,24 +485,24 @@ flowchart TD
     A[calendar.tsx\nÉcran] -->|1. Appel API| B[eventsService.fetchNextPage]
     
     %% Étape 2: Construction de la requête
-    B -->|2. Construction| C[query()]
-    C -->|where()| D[Filtres : blackList, placeId, selectedSchool]
-    D -->|orderBy()| E[Tri : start_time ASC]
-    E -->|limit()| F[Pagination : 10 items]
-    E -->|startAfter()| F
+    B -->|2. Construction| C["query()"]
+    C -->|"where()"| D[Filtres : blackList, placeId, selectedSchool]
+    D -->|"orderBy()"| E[Tri : start_time ASC]
+    E -->|"limit()"| F[Pagination : 10 items]
+    E -->|"startAfter()"| F
     
     %% Étape 3: Exécution
-    F -->|3. Exécution| G[Collection 'matches'\n(Firestore)]
+    F -->|3. Exécution| G["Collection 'matches'\n(Firestore)"]
     
     %% Étape 4: Traitement
     G -->|4. Résultat| H[QuerySnapshot]
     H -->|forEach| I[Extraction des documents]
-    I -->|toDate()| J[⚠️ Conversion Timestamp → Date]
+    I -->|"toDate()"| J[⚠️ Conversion Timestamp → Date]
     J -->|Ajout ID| K[Données transformées]
     K -->|Map| L[Tableau de matchs]
     
     %% Étape 5: Tri final
-    L -->|sort()| M[Tri par date]
+    L -->|"sort()"| M[Tri par date]
     
     %% Étape 6: Retour
     M -->|6. Retour| B
@@ -538,17 +538,17 @@ graph LR
     A[app/_layout.tsx\nRoot] --> B[Stack Navigator]
     
     %% Groups
-    B --> C[app/(tabs)/_layout.tsx\nOnglets]
-    B --> D[app/(onboarding)/_layout.tsx\nOnboarding]
-    B --> E[app/auth/_layout.tsx\nAuth]
-    B --> F[app/matches/_layout.tsx\nMatchs]
-    B --> G[app/events/_layout.tsx\nÉvénements]
+    B --> C["app/(tabs)/_layout.tsx\nOnglets"]
+    B --> D["app/(onboarding)/_layout.tsx\nOnboarding"]
+    B --> E["app/auth/_layout.tsx\nAuth"]
+    B --> F["app/matches/_layout.tsx\nMatchs"]
+    B --> G["app/events/_layout.tsx\nÉvénements"]
     
     %% Tabs
-    C --> H[calendar.tsx\n📅 Calendrier]
-    C --> I[competition/\n🏆 Compétition]
-    C --> J[map/\n🗺️ Carte]
-    C --> K[other/\n⋯ Menu]
+    C --> H["calendar.tsx\n📅 Calendrier"]
+    C --> I["competition/\n🏆 Compétition"]
+    C --> J["map/\n🗺️ Carte"]
+    C --> K["other/\n⋯ Menu"]
     
     %% Onboarding
     D --> L[index.tsx\nBienvenue]
@@ -561,7 +561,7 @@ graph LR
     I --> Q[index.tsx\nListe sports]
     I --> R[generalRankingScreen.tsx\nClassement]
     I --> S[sportDetail/]
-    S --> T[[sport_id].tsx\nDétails]
+    S --> T["[sport_id].tsx\nDétails"]
     
     %% Map
     J --> U[index.tsx\nCarte]
@@ -579,12 +579,12 @@ graph LR
     
     %% Matches
     F --> AC[head_to_head/]
-    AC --> AD[[id].tsx\nHead-to-Head]
+    AC --> AD["[id].tsx\nHead-to-Head"]
     F --> AE[ranked/]
-    AE --> AF[[id].tsx\nRanked]
+    AE --> AF["[id].tsx\nRanked"]
     
     %% Events
-    G --> AG[[id].tsx\nÉvénement]
+    G --> AG["[id].tsx\nÉvénement"]
     
     style B fill:#ff9,stroke:#333
     style C fill:#9f9,stroke:#333
@@ -603,7 +603,7 @@ erDiagram
         string id PK "ID unique"
         string sport_id FK "ID du sport"
         string category_id FK "ID de la catégorie"
-        string place_id FK__ "ID du lieu (nullable)"
+        string place_id FK "ID du lieu (nullable)"
         datetime start_time "Date/heure"
         string status "scheduled/ongoing/completed/cancelled"
         string kind "head_to_head/ranked"
@@ -611,11 +611,11 @@ erDiagram
         string[] delegations_id FK "IDs des délégations"
         string team1_id FK
         string team2_id FK
-        int team1_score__ "nullable"
-        int team2_score__ "nullable"
+        int team1_score "nullable"
+        int team2_score "nullable"
         array teams "Équipes avec détails"
     }
-    
+
     delegations {
         string id PK "ID unique"
         string name "Nom"
@@ -625,7 +625,7 @@ erDiagram
         int points "Points totaux"
         int ranking "Classement"
     }
-    
+
     sports {
         string id PK "ID unique"
         string name "Nom"
@@ -633,31 +633,31 @@ erDiagram
         string category_id FK "ID catégorie"
         string description "Description"
     }
-    
+
     users {
         string id PK "ID Firebase Auth"
         string email "Email"
-        string supported_delegation FK__ "ID délégation (nullable)"
+        string supported_delegation FK "ID délégation (nullable)"
         string[] followed_sports FK "IDs des sports suivis"
         string[] fcm_tokens "Tokens FCM"
         datetime last_login "Dernière connexion"
     }
-    
+
     places {
         string id PK "ID unique"
         string name "Nom"
         string description "Description"
         object location "Coordinates"
     }
-    
+
     %% Relations
     matches ||--o{ delegations : "array-contains"
     matches ||--|| sports : "belongs-to"
-    matches ||--|| places : "belongs-to (nullable)"
-    
+    matches o|--|| places : "belongs-to (nullable)"
+
     users ||--|| delegations : "supports (nullable)"
     users ||--o{ sports : "follows"
-    
+
     %% Notes
     comment "Les flèches montrent les relations entre collections"
 ```
