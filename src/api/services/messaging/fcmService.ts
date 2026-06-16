@@ -40,9 +40,15 @@ export const iOSPermissionRequest = async () => {
 }
 
 export const androidPermissionRequest = async () => {
+  // Android 13+ (API 33) requires POST_NOTIFICATIONS runtime permission.
+  if (Platform.Version < 33) {
+    console.log('Notification permission not required on this Android version');
+    return;
+  }
+
   //TODO : demander la permission de recevoir des notifications dans l'onboarding une fois créé (déplacer cette ligne dans le bon composant)
   const authStatus = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-  const enabled = (authStatus === PermissionsAndroid.RESULTS.GRANTED);
+  const enabled = authStatus === PermissionsAndroid.RESULTS.GRANTED;
 
   if (enabled) {
     console.log('Notification permission granted');
