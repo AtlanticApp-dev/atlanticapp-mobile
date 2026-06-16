@@ -1,5 +1,5 @@
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
@@ -11,8 +11,7 @@ import { Alert } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider } from 'react-native-paper';
-
-//PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)
+import { checkNotificationPermission, getFcmToken, saveFcmToken } from '@/src/api/services/messaging/fcmService';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -23,36 +22,75 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
+
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log('🔔 Notification reçue en foreground :', remoteMessage);
       if (remoteMessage.notification && remoteMessage.notification.title) {
-        Alert.alert(remoteMessage.notification.title, remoteMessage.notification.body);
+        if (remoteMessage.data?.type === 'new_match_alert'){
+          Alert.alert(
+            remoteMessage.notification.title,
+            remoteMessage.notification.body ?? 'Vous avez reçu une nouvelle alerte.',
+            [
+              { text: 'OK', style: 'cancel' },
+              { text: 'Aller voir', onPress: () => {
+                if (remoteMessage.data?.matchId) {
+                  router.push(`/matches/head_to_head/${remoteMessage.data.matchId}`);
+                }
+              } },
+            ]
+          );
+          return;
+        }
       }
       else{
         Alert.alert('Notification reçue', 'Vous avez reçu une notification sans titre ni corps.');
       }
     });
 
-
     messaging().subscribeToTopic('allUsers')
       .then(() => console.log('Abonné au topic allUsers !'))
       .catch(error => console.error('Erreur d\'abonnement au topic allUsers:', error));
 
-    return unsubscribe;
-  }, []);
-
-  useEffect(() => {
-    messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Message handled in the background!', remoteMessage);
+    const unsubscribeNotificationOpened = messaging().onNotificationOpenedApp(remoteMessage => {
+      if (remoteMessage.data?.type === 'new_match_alert' && remoteMessage.data?.matchId) {
+        router.push(`/matches/head_to_head/${remoteMessage.data.matchId}`);
+      }
     });
 
     messaging()
       .getInitialNotification()
       .then(remoteMessage => {
         if (remoteMessage) {
-          console.log('Notification caused app to open', remoteMessage);
+          if (remoteMessage.data?.matchId) {
+            router.push(`/matches/head_to_head/${remoteMessage.data.matchId}`);
+          }
         }
-      });
+      }
+    );
+
+      
+    const unsubscribeTokenRefresh = messaging().onTokenRefresh(newToken => {
+      //TODO: utiliser le vrai uid de l'utilisateur actuellement connecté
+      saveFcmToken('', newToken);
+    })
+
+    const initializeNotifications = async () => {
+      try {
+        await checkNotificationPermission();
+        //TODO: utiliser le vrai uid de l'utilisateur actuellement connecté
+        await getFcmToken('');
+      } catch (error) {
+        console.error('Error initializing notifications:', error);
+      }
+    }
+     
+    initializeNotifications();
+
+    return () => {
+      unsubscribe();
+      unsubscribeNotificationOpened();
+      unsubscribeTokenRefresh();
+    };
   }, []);
 
   useEffect(() => {
