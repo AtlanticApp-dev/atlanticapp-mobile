@@ -88,6 +88,7 @@ export default function RootLayout() {
 
     return () => {
       unsubscribe();
+      unsubscribeNotificationOpened();
       unsubscribeTokenRefresh();
     };
   }, []);
