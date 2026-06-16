@@ -51,13 +51,11 @@ export default function RootLayout() {
       .then(() => console.log('Abonné au topic allUsers !'))
       .catch(error => console.error('Erreur d\'abonnement au topic allUsers:', error));
 
-    messaging()
-      .onNotificationOpenedApp(async remoteMessage => {
-        if (remoteMessage.data?.matchId) {
-            router.push(`/matches/head_to_head/${remoteMessage.data.matchId}`);
-          }
-        }
-    )
+    const unsubscribeNotificationOpened = messaging().onNotificationOpenedApp(remoteMessage => {
+      if (remoteMessage.data?.type === 'new_match_alert' && remoteMessage.data?.matchId) {
+        router.push(`/matches/head_to_head/${remoteMessage.data.matchId}`);
+      }
+    });
 
     messaging()
       .getInitialNotification()
