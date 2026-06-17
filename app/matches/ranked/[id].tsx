@@ -142,7 +142,7 @@ const MatchPage: React.FC<Props> = () => {
             setCategoryId(match.category_id);
             fetchLocation(match.place_id);
             fetchSport(match.sport_id);
-            fetchTeams(match.teams);
+            fetchTeams(match.teams.map(team => team.id));
         }
     }, [match]);
 
