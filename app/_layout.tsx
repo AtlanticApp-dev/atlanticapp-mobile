@@ -21,26 +21,43 @@ export default function RootLayout() {
     SpaceMono: require('@/assets/fonts/SpaceMono-Regular.ttf'),
   });
 
+  const redirectFromNotification = (remoteMessage: any) => {
+    if (remoteMessage.data?.type === 'new_match_alert' && remoteMessage.data?.matchId) {
+      redirectToMatch(remoteMessage.data.matchId, remoteMessage.data.matchType);
+    }
+    //TODO : gérer d'autres types de notifications (ex: alertes d'événements, d'annonces, etc.)
+    else {
+      console.warn('Notification reçue avec un type non géré ou des données manquantes :', remoteMessage.data);
+      router.push(`/(tabs)/calendar`);
+    }
+  }
+
+  const redirectToMatch = (matchId: any, matchType: any) => {
+    if (matchType === 'head_to_head_match') {
+      router.push(`/matches/head_to_head/${matchId}`);
+    } else if (matchType === 'ranked_match') {
+      router.push(`/matches/ranked/${matchId}`);
+    }
+    else {
+      console.warn('Type de match inconnu pour la redirection :', matchType);
+      router.push(`/(tabs)/calendar`);
+    }
+  }
+
   useEffect(() => {
 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log('🔔 Notification reçue en foreground :', remoteMessage);
       if (remoteMessage.notification && remoteMessage.notification.title) {
-        if (remoteMessage.data?.type === 'new_match_alert'){
           Alert.alert(
             remoteMessage.notification.title,
             remoteMessage.notification.body ?? 'Vous avez reçu une nouvelle alerte.',
             [
               { text: 'OK', style: 'cancel' },
-              { text: 'Aller voir', onPress: () => {
-                if (remoteMessage.data?.matchId) {
-                  router.push(`/matches/head_to_head/${remoteMessage.data.matchId}`);
-                }
-              } },
+              { text: 'Aller voir', onPress: () => { redirectFromNotification(remoteMessage);} },
             ]
           );
           return;
-        }
       }
       else{
         Alert.alert('Notification reçue', 'Vous avez reçu une notification sans titre ni corps.');
@@ -52,23 +69,17 @@ export default function RootLayout() {
       .catch(error => console.error('Erreur d\'abonnement au topic allUsers:', error));
 
     const unsubscribeNotificationOpened = messaging().onNotificationOpenedApp(remoteMessage => {
-      if (remoteMessage.data?.type === 'new_match_alert' && remoteMessage.data?.matchId) {
-        router.push(`/matches/head_to_head/${remoteMessage.data.matchId}`);
-      }
+      redirectFromNotification(remoteMessage);
     });
 
     messaging()
       .getInitialNotification()
-      .then(remoteMessage => {
+      .then(remoteMessage => { 
         if (remoteMessage) {
-          if (remoteMessage.data?.matchId) {
-            router.push(`/matches/head_to_head/${remoteMessage.data.matchId}`);
-          }
+          redirectFromNotification(remoteMessage);
         }
-      }
-    );
+      });
 
-      
     const unsubscribeTokenRefresh = messaging().onTokenRefresh(newToken => {
       //TODO: utiliser le vrai uid de l'utilisateur actuellement connecté
       saveFcmToken('', newToken);
@@ -102,8 +113,6 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
-
-  
 
   return (
     <SafeAreaProvider>
