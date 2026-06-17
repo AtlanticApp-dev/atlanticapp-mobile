@@ -27,7 +27,7 @@ export default function RootLayout() {
     }
     //TODO : gérer d'autres types de notifications (ex: alertes d'événements, d'annonces, etc.)
     else {
-      console.warn('Notification reçue avec un type ou matchId manquant :', remoteMessage.data);
+      console.warn('Notification reçue avec un type non géré ou des données manquantes :', remoteMessage.data);
       router.push(`/(tabs)/calendar`);
     }
   }
