@@ -9,7 +9,7 @@ export const getAllRankings = async (): Promise<Ranking[]> => {
     return rankingList as Ranking[];
 }
 
-export const getGroupRankingsBySportIdAndCategory = async (sport_id: string, category: string): Promise<any> => {
+export const getGroupsBySportIdAndCategory = async (sport_id: string, category: string): Promise<any> => {
     const groupsRef = collection(db, "sports", sport_id, "categories", category, "groups");
     const q = query(groupsRef);
     const rankingSnapshot = await getDocs(q);

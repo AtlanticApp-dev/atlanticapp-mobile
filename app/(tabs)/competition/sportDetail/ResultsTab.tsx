@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, RefreshControl, ScrollView } from 'react-native';
-import { getFinalRankingFromSportIdAndCategoryId, getGroupRankingsBySportIdAndCategory } from '@/src/api/services/firestore/rankingService';
+import { getFinalRankingFromSportIdAndCategoryId, getGroupsBySportIdAndCategory } from '@/src/api/services/firestore/rankingService';
 import GroupRanking from '@/src/components/Competition/GroupRanking';
 import FinalRanking from '@/src/components/Competition/FinalRanking';
 import { getCategoryFromSportIdAndId } from '@/src/api/services/firestore/categoryService';
@@ -19,7 +19,7 @@ const ResultsTab: React.FC<ResultsTabProps> = ({sport_id, category_id}) => {
     const fetchRankings = async () => {
         setLoading(true);
         try {
-            const groups = await getGroupRankingsBySportIdAndCategory(sport_id, category_id);
+            const groups = await getGroupsBySportIdAndCategory(sport_id, category_id);
             const finalRanking = await getFinalRankingFromSportIdAndCategoryId(sport_id, category_id);
             const category = await getCategoryFromSportIdAndId(sport_id, category_id);
             setGroups(groups);
