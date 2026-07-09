@@ -10,7 +10,12 @@ const GroupRanking = ({ groupData }) => {
         const fetchData = async () => {
             const results = [];
 
-            const sorted = [...groupData.ranking].sort((a, b) => a.rank - b.rank);
+            const arrayRanking = Object.entries(groupData.ranking).map(([id, stats]) => ({
+                id: id,
+                ...stats
+            }));
+
+            const sorted = [...arrayRanking].sort((a, b) => a.rank - b.rank);
             for (const entry of sorted) {
                 const teamData = await getTeamFromId(entry.id);
                 const delegationData = await getDelegationFromId(teamData.delegation_id)
@@ -18,7 +23,6 @@ const GroupRanking = ({ groupData }) => {
                 results.push({
                     rank: entry.rank,
                     name: delegationData.title + (teamData.description ? ` - ${teamData.description}` : ''),
-                    delegationLogo: delegationData.image || null,
                     points: entry.points,
                     wins: entry.wins,
                     draws: entry.draws,
@@ -44,10 +48,9 @@ const GroupRanking = ({ groupData }) => {
             <Text style={styles.cell}>{item.goalsFor - item.goalsAgainst}</Text>
         </View>
     );
-
     return (
         <View style={styles.container}>
-            <Text style={styles.title} numberOfLines={1}>{groupData.group.description}</Text>
+            <Text style={styles.title} numberOfLines={1}>{groupData.description}</Text>
 
             <View style={[styles.row, styles.header]}>
                 <Text style={styles.headerCell}>#</Text>

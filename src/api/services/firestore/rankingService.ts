@@ -19,23 +19,8 @@ export const getGroupRankingsBySportIdAndCategory = async (sport_id: string, cat
             id: doc.id
         };
     });
-    const rankingPromises = (groupList.map(async group => {
-        const rankingRef = collection(db, "sports", sport_id, "categories", category, "groups", group.id, "ranking");
-        const rankingSnapshot = await getDocs(rankingRef);
-        const ranking = rankingSnapshot.docs.map(doc => {
-            return {
-                ...doc.data(),
-                id: doc.id
-            };
-        });
 
-        return {
-            ranking,
-            group: group
-        };
-    }));
-    const rankingList = await Promise.all(rankingPromises);
-    return rankingList;
+    return groupList;
 }
 
 export const getFinalRankingFromSportIdAndCategoryId = async (sport_id: string, category_id: string): Promise<any> => {
