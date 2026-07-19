@@ -25,6 +25,7 @@ const GroupRanking = ({ groupData }) => {
                     });
 
                     return {
+                        id: entry.id,
                         rank: entry.rank,
                         name: delegationData.title + (teamData.description ? ` - ${teamData.description}` : ''),
                         points: entry.points,
