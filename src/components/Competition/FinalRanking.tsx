@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import { getTeamFromRef } from "@/src/api/services/firestore/teamsService";
+import { getTeamFromId, getTeamFromRef } from "@/src/api/services/firestore/teamsService";
 import { getDelegationFromId } from "@/src/api/services/firestore/delegationService";
 
 const FinalRanking = ({ rankingData }) => {
@@ -12,7 +12,7 @@ const FinalRanking = ({ rankingData }) => {
 
             const sorted = [...rankingData].sort((a, b) => a.rank - b.rank);
             for (const entry of sorted) {
-                const teamData = await getTeamFromRef(entry.team_ref);
+                const teamData = await getTeamFromId(entry.id);
                 const delegationData = await getDelegationFromId(teamData.delegation_id)
 
                 results.push({
