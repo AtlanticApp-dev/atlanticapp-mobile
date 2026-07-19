@@ -1,5 +1,6 @@
 import { getDelegationFromId } from "@/src/api/services/firestore/delegationService";
 import { getTeamFromId } from "@/src/api/services/firestore/teamsService";
+import { queryClient } from "@/src/utils/queryClient";
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
@@ -8,29 +9,34 @@ const GroupRanking = ({ groupData }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const results = [];
+            const arrayRanking = Object.entries(groupData.ranking)
+                .map(([id, stats]) => ({id, ...stats}))
+                .sort((a, b) => a.rank - b.rank);
 
-            const arrayRanking = Object.entries(groupData.ranking).map(([id, stats]) => ({
-                id: id,
-                ...stats
-            }));
+            const results = await Promise.all(
+                arrayRanking.map(async (entry) => {
+                    const teamData = await queryClient.fetchQuery({
+                        queryKey: ['team', entry.id],
+                        queryFn: () => getTeamFromId(entry.id),
+                    });
+                    const delegationData = await queryClient.fetchQuery({
+                        queryKey: ['delegation', teamData.delegation_id],
+                        queryFn: () => getDelegationFromId(teamData.delegation_id),
+                    });
 
-            const sorted = [...arrayRanking].sort((a, b) => a.rank - b.rank);
-            for (const entry of sorted) {
-                const teamData = await getTeamFromId(entry.id);
-                const delegationData = await getDelegationFromId(teamData.delegation_id)
+                    return {
+                        rank: entry.rank,
+                        name: delegationData.title + (teamData.description ? ` - ${teamData.description}` : ''),
+                        points: entry.points,
+                        wins: entry.wins,
+                        draws: entry.draws,
+                        losses: entry.losses,
+                        goalsFor: entry.goalsFor,
+                        goalsAgainst: entry.goalsAgainst,
+                    };
+                })
+            );
 
-                results.push({
-                    rank: entry.rank,
-                    name: delegationData.title + (teamData.description ? ` - ${teamData.description}` : ''),
-                    points: entry.points,
-                    wins: entry.wins,
-                    draws: entry.draws,
-                    losses: entry.losses,
-                    goalsFor: entry.goalsFor,
-                    goalsAgainst: entry.goalsAgainst,
-                });
-            }
             setTeams(results);
         };
 
