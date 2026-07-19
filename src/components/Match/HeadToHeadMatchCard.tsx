@@ -62,7 +62,7 @@ const HeadToHeadMatchCard: React.FC<MatchCardProps> = ({ match }) => {
         data: team1,
         isLoading: isTeam1Loading,
         error: team1Error,
-    } = useTeam(match.teams[0]?.id);
+    } = useTeam(match.teams[0]?.id || '');
 
     const {
         data: team2,
