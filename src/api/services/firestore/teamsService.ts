@@ -68,7 +68,7 @@ export const getTeamFromRef = async (ref: DocumentReference): Promise<any> => {
     return { id: docSnap.id, ...docSnap.data() };
 }
 
-// HOOKS pour récupérer les délégations avec cache
+// Hook pour récupérer une équipe avec cache
 export const useTeam = (id: string) => {
   return useQuery({
     queryKey: ['team', id],
