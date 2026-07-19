@@ -57,5 +57,6 @@ export const useFinalRanking = (sport_id: string, category_id: string) => {
   return useQuery({
     queryKey: ['finalRanking', sport_id, category_id],
     queryFn: () => getFinalRankingFromSportIdAndCategoryId(sport_id, category_id),
+    enabled: !!sport_id && !!category_id,
   });
 };
