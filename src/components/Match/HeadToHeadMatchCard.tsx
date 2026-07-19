@@ -1,12 +1,12 @@
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { getTeamFromId } from '@/src/api/services/firestore/teamsService';
-import { getDelegationFromId } from '@/src/api/services/firestore/delegationService';
-import { getPlaceFromId } from '@/src/api/services/firestore/placeService';
+import { useTeam } from '@/src/api/services/firestore/teamsService';
+import { useDelegation } from '@/src/api/services/firestore/delegationService';
+import { usePlace} from '@/src/api/services/firestore/placeService';
 import { translateStatus } from '@/src/utils/matchMetadataTranslator';
-import { getSportFromId } from '@/src/api/services/firestore/sportsService';
-import { getCategoryFromSportIdAndId } from '@/src/api/services/firestore/categoryService';
+import { useSport} from '@/src/api/services/firestore/sportsService';
+import { useCategory } from '@/src/api/services/firestore/categoryService';
 
 interface Match {
     id: string;
@@ -15,10 +15,10 @@ interface Match {
     sport_id: string;
     start_time: Date;
     status: string;
-    team1_id: string;
-    team2_id: string;
-    team1_score?: number | number[];
-    team2_score?: number | number[];
+    teams: {
+        id: string;
+        score: number;
+    }[];
     title: string;
     description: string;
     place_id: string;
@@ -51,104 +51,55 @@ interface MatchCardProps {
 }
 
 const HeadToHeadMatchCard: React.FC<MatchCardProps> = ({ match }) => {
-    const [team1, setTeam1] = useState<Team | null>(null);
-    const [team2, setTeam2] = useState<Team | null>(null);
-    const [delegation1, setDelegation1] = useState<Delegation | null>(null);
-    const [delegation2, setDelegation2] = useState<Delegation | null>(null);
-    const [activeFetches, setActiveFetches] = useState<number>(0);
-    const [location, setLocation] = useState<string | null>(null);
-    const [sport, setSport] = useState<Sport | null>(null);
-    const [category, setCategory] = useState(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (match.teams[0]) {
-                setActiveFetches(prev => prev + 1);
-                try {
-                    const teamData = await getTeamFromId(match.teams[0].id);
-                    setTeam1(teamData);
-                    const delegationData = await getDelegationFromId(teamData.delegation_id);
-                    setDelegation1(delegationData);
-                } catch (error) {
-                    console.error('Error fetching team1 data:', error);
-                } finally {
-                    setActiveFetches(prev => prev - 1);
-                }
-            }
-            if (match.teams[1]) {
-                setActiveFetches(prev => prev + 1);
-                try {
-                    const teamData = await getTeamFromId(match.teams[1].id);
-                    setTeam2(teamData);
-                    const delegationData = await getDelegationFromId(teamData.delegation_id);
-                    setDelegation2(delegationData);
-                } catch (error) {
-                    console.error('Error fetching team2 data:', error);
-                } finally {
-                    setActiveFetches(prev => prev - 1);
-                }
-            }
-        };
-        fetchData();
-    }, [match.team1_id, match.team2_id]);
+    const {
+        data: category,
+        isLoading: isCategoryLoading,
+        error: categoryError,
+    } = useCategory(match.sport_id, match.category_id);
 
-    useEffect(() => {
-        const fetchPlace = async () => {
-            if (match.place_id) {
-                setActiveFetches(prev => prev + 1);
-                try {
-                    const placeData = await getPlaceFromId(match.place_id);
-                    setLocation(placeData.title);
-                } catch (error) {
-                    console.error('Error fetching place data:', error);
-                } finally {
-                    setActiveFetches(prev => prev - 1);
-                }
-            }
-        };
-        fetchPlace();
-    }, [match.place_id]);
+    const {
+        data: team1,
+        isLoading: isTeam1Loading,
+        error: team1Error,
+    } = useTeam(match.teams[0]?.id || '');
 
-    useEffect(() => {
-        const fetchSport = async () => {
-            if (match.sport_id) {
-                setActiveFetches(prev => prev + 1);
-                try {
-                    const sportData = await getSportFromId(match.sport_id);
-                    setSport(sportData);
-                } catch (error) {
-                    console.error('Error fetching sport data:', error);
-                } finally {
-                    setActiveFetches(prev => prev - 1);
-                }
-            }
-        };
-        fetchSport();
-    }, [match.sport_id]);
+    const {
+        data: team2,
+        isLoading: isTeam2Loading,
+        error: team2Error,
+    } = useTeam(match.teams[1]?.id || '');
 
-    useEffect(() => {
-        const fetchCategory = async () => {
-            if (match.category_id){
-                setActiveFetches(prev => prev + 1);
-                try {
-                    const categoryData = await getCategoryFromSportIdAndId(match.sport_id, match.category_id);
-                    setCategory(categoryData);
-                } catch (error) {
-                    console.error('Error fetching category data:', error);
-                } finally {
-                    setActiveFetches(prev => prev - 1);
-                }
-            }
-        }
-        fetchCategory();
-    }, [match.category_id]);
+    const {
+        data: delegation1,
+        isLoading: isDelegation1Loading,
+        error: delegation1Error,
+    } = useDelegation(team1?.delegation_id || '');
+
+    const {
+        data: delegation2,
+        isLoading: isDelegation2Loading,
+        error: delegation2Error,
+    } = useDelegation(team2?.delegation_id || '');
+
+    const {
+        data: place,
+        isLoading: isPlaceLoading,
+        error: placeError,
+    } = usePlace(match.place_id);
+    
+    const {
+        data: sport,
+        isLoading: isSportLoading,
+        error: sportError,
+    } = useSport(match.sport_id);
 
     const getDayOfWeek = (date: Date): string => {
         const days = ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'];
         return days[(new Date(date)).getDay()];
     };
 
-    if (activeFetches == 0){
+    if (!isCategoryLoading && !isTeam1Loading && !isTeam2Loading && !isDelegation1Loading && !isDelegation2Loading && !isPlaceLoading && !isSportLoading) {
         return (
             <TouchableOpacity style={styles.container} onPress={() => router.push(`/matches/head_to_head/${match.id}`)} onLongPress={() => null}>
                 <View style={styles.header}>
@@ -183,7 +134,7 @@ const HeadToHeadMatchCard: React.FC<MatchCardProps> = ({ match }) => {
                     </View>
                 </View> 
                 
-                <Text style={styles.venue}>{location}</Text>
+                <Text style={styles.venue}>{place?.title}</Text>
             </TouchableOpacity>
         );
     }
@@ -197,11 +148,11 @@ const HeadToHeadMatchCard: React.FC<MatchCardProps> = ({ match }) => {
             </View>
             <View style={styles.teamsContainer}>
                 <View style={styles.teamInfo}>
-                    <Image source={{ uri: 'https://via.placeholder.com/60' }} style={styles.teamLogo} />
+                    <View style={styles.teamLogo} />
                     <Text style={styles.teamName}>Chargement...</Text>
                 </View>
                 <View style={styles.teamInfo}>
-                    <Image source={{ uri: 'https://via.placeholder.com/60' }} style={styles.teamLogo} />
+                    <View style={styles.teamLogo} />
                     <Text style={styles.teamName}>Chargement...</Text>
                 </View>
             </View>

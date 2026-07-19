@@ -1,6 +1,6 @@
-import { getCategoryFromSportIdAndId } from '@/src/api/services/firestore/categoryService';
-import { getSportFromId } from '@/src/api/services/firestore/sportsService';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useCategory } from '@/src/api/services/firestore/categoryService';
+import { useSport } from '@/src/api/services/firestore/sportsService';
+import React, { useCallback } from 'react';
 import { View, StyleSheet, RefreshControl, ScrollView, Linking, Alert, Button } from 'react-native';
 
 interface ResultsTabProps {
@@ -28,25 +28,21 @@ const OpenURLButton = ({url, children}: OpenURLButtonProps) => {
 };
 
 const SportInformationsTab: React.FC<ResultsTabProps> = ({sport_id, category_id}) => {
-    const [activeFetches, setActiveFetches] = useState<number>(0);
-    const [sport, setSport] = useState<any>(null);
-    const [category, setCategory] = useState<any>(null);
 
-    const fetchSport = async () => {
-        setActiveFetches(prev => prev + 1);
-        const sportData = await getSportFromId(sport_id);
-        const category = await getCategoryFromSportIdAndId(sport_id, category_id);
-        setSport(sportData);
-        setCategory(category);
-        setActiveFetches(prev => prev - 1);
-    }
+    const {
+        data: category,
+        isLoading: isCategoryLoading,
+        error: categoryError
+    } = useCategory(sport_id, category_id);
 
-    useEffect(() => {
-        fetchSport();
-    }, [sport_id]);
+    const {
+        data: sport,
+        isLoading: isSportLoading,
+        error: sportError
+    } = useSport(sport_id);
 
     const renderRulesUrlButton = () => {
-        if (!category || !category.rules_url) return null;
+        if (!category || !sport || !category.rules_url) return null;
 
         return (
             <OpenURLButton url={category.rules_url}>
@@ -58,7 +54,7 @@ const SportInformationsTab: React.FC<ResultsTabProps> = ({sport_id, category_id}
     return (
         <View style={styles.main_container}>
             <ScrollView
-                refreshControl={<RefreshControl refreshing={activeFetches > 0}/>}
+                refreshControl={<RefreshControl refreshing={isCategoryLoading || isSportLoading}/>}
             >
                 {renderRulesUrlButton()}
                 

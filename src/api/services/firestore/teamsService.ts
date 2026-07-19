@@ -3,6 +3,7 @@ import { RawMatchTeam, RawTeam } from "@/types/rawModels";
 import { EnrichedMatchTeam, EnrichedTeam } from "@/types/enrichedModels";
 import { enrichSport, getSportFromId } from "./sportsService";
 import { getDelegationFromId, enrichDelegation } from "./delegationService";
+import { useQuery } from "@tanstack/react-query";
 
 const db = getFirestore();
 
@@ -66,3 +67,12 @@ export const getTeamFromRef = async (ref: DocumentReference): Promise<any> => {
     }
     return { id: docSnap.id, ...docSnap.data() };
 }
+
+// Hook pour récupérer une équipe avec cache
+export const useTeam = (id: string) => {
+  return useQuery({
+    queryKey: ['team', id],
+    queryFn: () => getTeamFromId(id),
+    enabled: !!id, // Ne s'exécute que si l'ID est défini
+  });
+};
