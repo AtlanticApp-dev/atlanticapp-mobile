@@ -67,7 +67,7 @@ export const enrichSport = async (rawSport : RawSport): Promise<EnrichedSport> =
     };
 }
 
-// HOOKS pour récupérer les délégations avec cache
+// Hook pour récupérer un sport avec cache
 export const useSport = (id: string) => {
   return useQuery({
     queryKey: ['sport', id],
