@@ -67,7 +67,7 @@ export const enrichPlace = async (rawPlace : RawPlace) : Promise<EnrichedPlace> 
     return (await enrichPlaces([rawPlace]))[0];
 }
 
-// HOOKS pour récupérer les délégations avec cache
+// Hook pour récupérer un lieu avec cache
 export const usePlace = (id: string) => {
   return useQuery({
     queryKey: ['place', id],
