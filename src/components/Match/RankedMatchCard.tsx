@@ -55,7 +55,7 @@ const RankedMatchCard: React.FC<MatchCardProps> = ({ match }) => {
         return days[(new Date(date)).getDay()];
     };
 
-    if (!isCategoryLoading && !isPlaceLoading && !isSportLoading && category && place && sport) {
+    if (!isCategoryLoading && !isPlaceLoading && !isSportLoading) {
         return (
             <TouchableOpacity style={styles.container} onPress={() => router.push(`/matches/ranked/${match.id}`)} onLongPress={() => null}>
                 <View style={styles.header}>
