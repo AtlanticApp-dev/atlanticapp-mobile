@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import { getTeamFromId, getTeamFromRef } from "@/src/api/services/firestore/teamsService";
+import { getTeamFromId } from "@/src/api/services/firestore/teamsService";
 import { getDelegationFromId } from "@/src/api/services/firestore/delegationService";
 
 const FinalRanking = ({ rankingData }) => {
