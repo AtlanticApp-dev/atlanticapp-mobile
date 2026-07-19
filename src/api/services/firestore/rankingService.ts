@@ -49,6 +49,7 @@ export const useGroups = (sport_id: string, category_id: string) => {
   return useQuery({
     queryKey: ['groups', sport_id, category_id],
     queryFn: () => getGroupsBySportIdAndCategory(sport_id, category_id),
+    enabled: !!sport_id && !!category_id,
   });
 };
 
