@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, RefreshControl, ScrollView } from 'react-native';
-import { getFinalRankingFromSportIdAndCategoryId, getGroupsBySportIdAndCategory } from '@/src/api/services/firestore/rankingService';
+import { useFinalRanking, useGroups } from '@/src/api/services/firestore/rankingService';
 import GroupRanking from '@/src/components/Competition/GroupRanking';
 import FinalRanking from '@/src/components/Competition/FinalRanking';
-import { getCategoryFromSportIdAndId } from '@/src/api/services/firestore/categoryService';
+import { useCategory } from '@/src/api/services/firestore/categoryService';
 
 interface ResultsTabProps {
     sport_id: any;
@@ -11,29 +11,25 @@ interface ResultsTabProps {
 }
 
 const ResultsTab: React.FC<ResultsTabProps> = ({sport_id, category_id}) => {
-    const [groups, setGroups] = useState<any[]>([]);
-    const [finalRanking, setFinalRanking] = useState<any[]>([]);
-    const [category, setCategory] = useState<any>({});
-    const [loading, setLoading] = useState<boolean>(true);
 
-    const fetchRankings = async () => {
-        setLoading(true);
-        try {
-            const groups = await getGroupsBySportIdAndCategory(sport_id, category_id);
-            const finalRanking = await getFinalRankingFromSportIdAndCategoryId(sport_id, category_id);
-            const category = await getCategoryFromSportIdAndId(sport_id, category_id);
-            setGroups(groups);
-            setFinalRanking(finalRanking);
-            setCategory(category);
-            setLoading(false);
-        } catch (error) {
-            console.error("Error fetching ranking:", error);
-        }
-    };
+    const {
+        data: category,
+        isLoading: isCategoryLoading,
+        error: categoryError
+    } = useCategory(sport_id, category_id);
 
-    useEffect(() => {
-        fetchRankings();
-    }, []);
+    const {
+        data: groups,
+        isLoading: isGroupsLoading,
+        error: groupsError
+    } = useGroups(sport_id, category_id);
+
+    const {
+        data: finalRanking,
+        isLoading: isFinalRankingLoading,
+        error: finalRankingError
+    } = useFinalRanking(sport_id, category_id);
+
 
     const renderFinalRanking = (ranking: any[]) => {
         return <FinalRanking rankingData={ranking} />
@@ -48,12 +44,12 @@ const ResultsTab: React.FC<ResultsTabProps> = ({sport_id, category_id}) => {
     return (
         <View style={styles.main_container}>
             <ScrollView
-                refreshControl={<RefreshControl refreshing={loading}/>}
+                refreshControl={<RefreshControl refreshing={isGroupsLoading || isFinalRankingLoading}/>}
             >
-                {groups.map((group, index) => (
+                {groups?.map((group, index) => (
                     renderGroup(group, index)
                 ))}
-                {finalRanking && category.show_ranking ? renderFinalRanking(finalRanking) :
+                {finalRanking && category?.show_ranking ? renderFinalRanking(finalRanking) :
                     <View style={{ alignItems: 'center', height: 80, justifyContent: 'center', padding: 15 }}>
                         <Text style={{ fontWeight: 'bold', fontSize: 18, textAlign: 'center' }}>Classement final à venir...</Text>
                     </View>

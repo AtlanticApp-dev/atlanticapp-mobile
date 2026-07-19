@@ -1,6 +1,7 @@
 import { getFirestore, collection, getDocs, doc, getDoc, query, orderBy } from "@react-native-firebase/firestore";
 import { RawSport } from "@/types/rawModels";
 import { EnrichedSport } from "@/types/enrichedModels";
+import { useQuery } from "@tanstack/react-query";
 
 const db = getFirestore();
 
@@ -65,3 +66,12 @@ export const enrichSport = async (rawSport : RawSport): Promise<EnrichedSport> =
         categories: rawSport.categories,
     };
 }
+
+// HOOKS pour récupérer les délégations avec cache
+export const useSport = (id: string) => {
+  return useQuery({
+    queryKey: ['sport', id],
+    queryFn: () => getSportFromId(id),
+    enabled: !!id, // Ne s'exécute que si l'ID est défini
+  });
+};

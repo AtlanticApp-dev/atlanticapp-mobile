@@ -6,6 +6,8 @@ import React, { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@/src/utils/queryClient';
 
 import { Alert } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
@@ -118,16 +120,18 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <PaperProvider>
       <GestureHandlerRootView>
-        <Stack
-        >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
-          <Stack.Screen name="matches" options={{ headerTitle : "Détails du match", headerBackTitle : "Retour"}}/>
-          <Stack.Screen name="events" options={{ headerTitle : "Détails de l'événement", headerBackTitle : "Retour"}}/>
-          <Stack.Screen name="+not-found" />
-          <Stack.Screen name="auth" options={{ headerTitle : "Authentification", headerBackTitle : "Retour"}} />
-        </Stack>
-        <StatusBar style="auto" />
+        <QueryClientProvider client={queryClient}>
+          <Stack
+          >
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+            <Stack.Screen name="matches" options={{ headerTitle : "Détails du match", headerBackTitle : "Retour"}}/>
+            <Stack.Screen name="events" options={{ headerTitle : "Détails de l'événement", headerBackTitle : "Retour"}}/>
+            <Stack.Screen name="+not-found" />
+            <Stack.Screen name="auth" options={{ headerTitle : "Authentification", headerBackTitle : "Retour"}} />
+          </Stack>
+          <StatusBar style="auto" />
+        </QueryClientProvider>
       </GestureHandlerRootView>
       </PaperProvider>
     </SafeAreaProvider>

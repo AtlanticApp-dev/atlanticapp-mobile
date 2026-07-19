@@ -1,7 +1,7 @@
 import { EnrichedDelegation } from '@/types/enrichedModels';
 import { RawDelegation } from '@/types/rawModels';
 import { collection, getDoc, doc, getDocs, getFirestore, query, orderBy} from '@react-native-firebase/firestore';
-
+import { useQuery } from '@tanstack/react-query';
 
 const db = getFirestore();
 
@@ -62,3 +62,12 @@ export function enrichDelegations(rawDelegations : RawDelegation[]) : Promise<En
 export async function enrichDelegation(rawDelegation : RawDelegation) : Promise<EnrichedDelegation> {
     return (await enrichDelegations([rawDelegation]))[0];
 }
+
+// HOOKS pour récupérer les délégations avec cache
+export const useDelegation = (id: string) => {
+  return useQuery({
+    queryKey: ['delegation', id],
+    queryFn: () => getDelegationFromId(id),
+    enabled: !!id, // Ne s'exécute que si l'ID est défini
+  });
+};

@@ -48,6 +48,7 @@ const GroupRanking = ({ groupData }) => {
             <Text style={styles.cell}>{item.goalsFor - item.goalsAgainst}</Text>
         </View>
     );
+
     return (
         <View style={styles.container}>
             <Text style={styles.title} numberOfLines={1}>{groupData.description}</Text>

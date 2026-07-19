@@ -1,10 +1,10 @@
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { getPlaceFromId } from '@/src/api/services/firestore/placeService';
-import { getSportFromId } from '@/src/api/services/firestore/sportsService';
+import { usePlace } from '@/src/api/services/firestore/placeService';
+import { useSport } from '@/src/api/services/firestore/sportsService';
 import { translatePhase, translateStatus } from '@/src/utils/matchMetadataTranslator';
-import { getCategoryFromSportIdAndId } from '@/src/api/services/firestore/categoryService';
+import { useCategory } from '@/src/api/services/firestore/categoryService';
 
 
 interface Match {
@@ -31,69 +31,31 @@ interface MatchCardProps {
 }
 
 const RankedMatchCard: React.FC<MatchCardProps> = ({ match }) => {
-    const [activeFetches, setActiveFetches] = useState<number>(0);
-    const [sport, setSport] = useState<Sport | null>(null);
-    const [location, setLocation] = useState<string | null>(null);
-    const [category, setCategory] = useState(null);
-    
 
-    useEffect(() => {
-        const fetchPlace = async () => {
-            if (match.place_id) {
-                setActiveFetches(prev => prev + 1);
-                try {
-                    const placeData = await getPlaceFromId(match.place_id);
-                    setLocation(placeData.title);
-                } catch (error) {
-                    console.error('Error fetching place data:', error);
-                } finally {
-                    setActiveFetches(prev => prev - 1);
-                }
-            }
-        };
-        fetchPlace();
-    }, [match.place_id]);
+    const {
+        data: category,
+        isLoading: isCategoryLoading,
+        error: categoryError,
+    } = useCategory(match.sport_id, match.category_id);
 
-    useEffect(() => {
-        const fetchSport = async () => {
-            if (match.sport_id) {
-                setActiveFetches(prev => prev + 1);
-                try {
-                    const sportData = await getSportFromId(match.sport_id);
-                    setSport(sportData);
-                } catch (error) {
-                    console.error('Error fetching sport data:', error);
-                } finally {
-                    setActiveFetches(prev => prev - 1);
-                }
-            }
-        };
-        fetchSport();
-    }, [match.sport_id]);
+    const {
+        data: place,
+        isLoading: isPlaceLoading,
+        error: placeError,
+    } = usePlace(match.place_id);
 
-    useEffect(() => {
-        const fetchCategory = async () => {
-            if (match.category_id){
-                setActiveFetches(prev => prev + 1);
-                try {
-                    const categoryData = await getCategoryFromSportIdAndId(match.sport_id, match.category_id);
-                    setCategory(categoryData);
-                } catch (error) {
-                    console.error('Error fetching category data:', error);
-                } finally {
-                    setActiveFetches(prev => prev - 1);
-                }
-            }
-        }
-        fetchCategory();
-    }, [match.category_id]);
+    const {
+        data: sport,
+        isLoading: isSportLoading,
+        error: sportError,
+    } = useSport(match.sport_id);
 
     const getDayOfWeek = (date: Date): string => {
         const days = ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'];
         return days[(new Date(date)).getDay()];
     };
 
-    if (activeFetches == 0) {
+    if (!isCategoryLoading && !isPlaceLoading && !isSportLoading && category && place && sport) {
         return (
             <TouchableOpacity style={styles.container} onPress={() => router.push(`/matches/ranked/${match.id}`)} onLongPress={() => null}>
                 <View style={styles.header}>
@@ -117,7 +79,7 @@ const RankedMatchCard: React.FC<MatchCardProps> = ({ match }) => {
                     <Text style={styles.title} numberOfLines={1}>{translatePhase(match.phase)}</Text>
                 </View>
                 
-                <Text style={styles.venue}>{location}</Text>
+                <Text style={styles.venue}>{place?.title}</Text>
             </TouchableOpacity>
         );
     }

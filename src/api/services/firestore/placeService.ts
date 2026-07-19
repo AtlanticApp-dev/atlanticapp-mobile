@@ -2,6 +2,7 @@ import { collection, getDoc, doc, getDocs, getFirestore, query, orderBy} from '@
 import { RawPlace } from '@/types/rawModels';
 import { EnrichedPlace } from '@/types/enrichedModels';
 import { enrichSports, getSportFromId } from './sportsService';
+import { useQuery } from '@tanstack/react-query';
 
 const db = getFirestore();
 
@@ -65,3 +66,12 @@ export const enrichPlaces = async (rawPlaces : RawPlace[]) : Promise<EnrichedPla
 export const enrichPlace = async (rawPlace : RawPlace) : Promise<EnrichedPlace> => {
     return (await enrichPlaces([rawPlace]))[0];
 }
+
+// HOOKS pour récupérer les délégations avec cache
+export const usePlace = (id: string) => {
+  return useQuery({
+    queryKey: ['place', id],
+    queryFn: () => getPlaceFromId(id),
+    enabled: !!id, // Ne s'exécute que si l'ID est défini
+  });
+};

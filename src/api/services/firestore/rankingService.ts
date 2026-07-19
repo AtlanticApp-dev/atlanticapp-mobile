@@ -1,5 +1,7 @@
 import { getFirestore, collection, getDocs, doc, getDoc, query } from "@react-native-firebase/firestore";
 import { RawGeneralRanking, Ranking } from "@/types/models";
+import { useQuery } from "@tanstack/react-query";
+
 const db = getFirestore();
 
 export const getAllRankings = async (): Promise<Ranking[]> => {
@@ -33,12 +35,27 @@ export const getFinalRankingFromSportIdAndCategoryId = async (sport_id: string, 
 
 export const getGeneralRanking = async (): Promise<RawGeneralRanking> => {
     const docRef = doc(db, 'competition', 'general_ranking');
-        const rankingSnapshot = await getDoc(docRef);
-    
-        if (!rankingSnapshot.exists) {
-            console.log('General ranking not found');
-            throw new Error(`General ranking not found`);
-        }
-    
-        return rankingSnapshot.data() as RawGeneralRanking;
+    const rankingSnapshot = await getDoc(docRef);
+    if (!rankingSnapshot.exists) {
+        console.log('General ranking not found');
+        throw new Error(`General ranking not found`);
+    }
+
+    return rankingSnapshot.data() as RawGeneralRanking;
 }
+
+// Hook personnalisé pour récupérer les groupes avec cache
+export const useGroups = (sport_id: string, category_id: string) => {
+  return useQuery({
+    queryKey: ['groups', sport_id, category_id],
+    queryFn: () => getGroupsBySportIdAndCategory(sport_id, category_id),
+  });
+};
+
+// Hook personnalisé pour le classement final
+export const useFinalRanking = (sport_id: string, category_id: string) => {
+  return useQuery({
+    queryKey: ['finalRanking', sport_id, category_id],
+    queryFn: () => getFinalRankingFromSportIdAndCategoryId(sport_id, category_id),
+  });
+};
