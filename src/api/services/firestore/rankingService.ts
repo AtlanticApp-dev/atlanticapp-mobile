@@ -29,7 +29,12 @@ export const getFinalRankingFromSportIdAndCategoryId = async (sport_id: string, 
     const groupsRef = collection(db, "sports", sport_id, "categories", category_id, "final_ranking");
     const q = query(groupsRef);
     const rankingSnapshot = await getDocs(q);
-    const rankingList = rankingSnapshot.docs.map(doc => doc.data());
+    const rankingList = rankingSnapshot.docs.map(doc => {
+        return {
+            ...doc.data(),
+            id: doc.id
+        };
+    });
     return rankingList;
 }
 
