@@ -121,6 +121,15 @@ type getMatchesFromPlaceIdAndCategoryParams = {
     limitCount?: number;
     lastDoc?: any;
 }
+
+type getMatchesFromSportIdAndCategoryIdAndPhaseIdParams = {
+    sportId: string;
+    categoryId: string;
+    phaseId: string;
+    limitCount?: number;
+    lastDoc?: any;
+}
+
 export const getMatchesFromSportIdAndCategory = async ({sportId, categoryId, limitCount = 10, lastDoc = null} : getMatchesFromPlaceIdAndCategoryParams): Promise<{ matches: Match[]; lastDoc: any }> => {
     try {
         let q = query(
@@ -183,6 +192,50 @@ export const updateRankedMatchRanking = async (matchId: string, ranking: string[
         await updateDoc(matchRef, { teams : ranking });
     } catch (error) {
         console.error("Error updating ranked match ranking:", error);
+        throw error;
+    }
+};
+
+export const getMatchesFromSportIdAndCategoryIdAndPhaseId = async ({sportId, categoryId, phaseId, limitCount = 10, lastDoc = null} : getMatchesFromSportIdAndCategoryIdAndPhaseIdParams): Promise<{ matches: Match[]; lastDoc: any }> => {
+    try {
+        let q = query(
+            collection(getFirestore(), 'matches'),
+            where('sport_id', '==', sportId),
+            where('category_id', '==', categoryId),
+            where('phase', '==', phaseId),
+            orderBy('start_time', 'asc'),
+            limit(limitCount)
+        );
+
+        if (lastDoc) {
+            q = query(q, startAfter(lastDoc));
+        }
+
+        const querySnapshot = await getDocs(q);
+
+        const newLastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+        const matches: Match[] = [];
+        querySnapshot.forEach((doc) => {
+            const data = { 
+                id: doc.id,
+                ...doc.data()
+            } as Match;
+
+            if (data.start_time) {
+                data.start_time = (data.start_time as any).toDate();
+            }
+            
+            matches.push(data);
+        }); 
+
+        return {
+            matches: matches,
+            lastDoc: newLastDoc
+        };
+    }
+    catch (error) {
+        console.error("Erreur lors de la récupération des matchs avec phase:", error);
         throw error;
     }
 };
