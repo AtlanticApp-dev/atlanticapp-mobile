@@ -94,11 +94,11 @@ const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}
                         
             // Trier par group_id, puis trier les matches dans chaque groupe par start_time
             Object.keys(groupsMap).sort().forEach((groupId) => {
-const sortedMatches = groupsMap[groupId].sort((a, b) => {
-    const aTime = a?.start_time ? new Date(a.start_time).getTime() : Number.POSITIVE_INFINITY;
-    const bTime = b?.start_time ? new Date(b.start_time).getTime() : Number.POSITIVE_INFINITY;
-    return aTime - bTime;
-});
+                const sortedMatches = groupsMap[groupId].sort((a, b) => {
+                    const aTime = a?.start_time ? new Date(a.start_time).getTime() : Number.POSITIVE_INFINITY;
+                    const bTime = b?.start_time ? new Date(b.start_time).getTime() : Number.POSITIVE_INFINITY;
+                    return aTime - bTime;
+                });
                 // Utiliser le nom du groupe si disponible, sinon afficher l'ID
                 const foundGroup = groups.find((g: any) => g.id === groupId);
                 const groupName = foundGroup?.description || `Groupe ${groupId}`;
