@@ -309,9 +309,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    scrollView: {
-        flex: 1,
-    },
     headerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
