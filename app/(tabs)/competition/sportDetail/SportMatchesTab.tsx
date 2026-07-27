@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SectionList, TouchableOpacity, Modal, FlatList, Pressable, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, SectionList, TouchableOpacity, Modal, FlatList, Pressable } from 'react-native';
 import { getMatchesFromSportIdAndCategory, getMatchesFromSportIdAndCategoryIdAndPhaseId, useAllFinalPhaseMatches } from '@/src/api/services/firestore/matchService';
 import { useGroups } from '@/src/api/services/firestore/rankingService';
 import EventCard from '@/src/components/Event/EventCard';

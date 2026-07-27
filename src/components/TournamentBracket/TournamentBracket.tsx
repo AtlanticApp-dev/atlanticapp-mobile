@@ -299,7 +299,6 @@ export const buildTournamentBracket = (matches: any[]): BracketTree => {
     if (isFinalPhase) {
       // Pour finale et 3ème place : prendre le premier match disponible ou créer un blank
       const bracketMatches: BracketMatch[] = [];
-      const expectedForPhase = 1;
       
       if (phaseMatches.length > 0) {
         // Utiliser le premier match trouvé (avec ou sans match_number)
