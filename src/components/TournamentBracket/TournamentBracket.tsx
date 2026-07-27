@@ -649,7 +649,7 @@ const BracketMatchCard: React.FC<BracketMatchCardProps> = ({ match, onPress }) =
         >
           {delegation1?.title ? `${delegation1.title} ${team1?.description || ''}` : 'Non défini'}
         </Text>
-        {(match.team1_score !== undefined && match.team1_score !== null) && (
+        {(match.team1_score !== undefined && match.team1_score !== null && ['live','completed'].includes(match.status)) && (
           <Text style={styles.score}>{formatScore(match.team1_score)}</Text>
         )}
       </View>
@@ -665,7 +665,7 @@ const BracketMatchCard: React.FC<BracketMatchCardProps> = ({ match, onPress }) =
         >
           {delegation2?.title ? `${delegation2.title} ${team2?.description || ''}` : 'Non défini'}
         </Text>
-        {(match.team2_score !== undefined && match.team2_score !== null) && (
+        {(match.team2_score !== undefined && match.team2_score !== null && ['live','completed'].includes(match.status)) && (
           <Text style={styles.score}>{formatScore(match.team2_score)}</Text>
         )}
       </View>
