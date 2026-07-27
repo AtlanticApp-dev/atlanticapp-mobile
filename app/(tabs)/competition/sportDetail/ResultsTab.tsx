@@ -14,20 +14,16 @@ const ResultsTab: React.FC<ResultsTabProps> = ({sport_id, category_id}) => {
 
     const {
         data: category,
-        isLoading: isCategoryLoading,
-        error: categoryError
     } = useCategory(sport_id, category_id);
 
     const {
         data: groups,
         isLoading: isGroupsLoading,
-        error: groupsError
     } = useGroups(sport_id, category_id);
 
     const {
         data: finalRanking,
         isLoading: isFinalRankingLoading,
-        error: finalRankingError
     } = useFinalRanking(sport_id, category_id);
 
 

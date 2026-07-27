@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SectionList, TouchableOpacity, Modal, FlatList, Pressable } from 'react-native';
-import { getMatchesFromSportIdAndCategory, getMatchesFromSportIdAndCategoryIdAndPhaseId } from '@/src/api/services/firestore/matchService';
+import { getMatchesFromSportIdAndCategory, getMatchesFromSportIdAndCategoryIdAndPhaseId, useAllFinalPhaseMatches } from '@/src/api/services/firestore/matchService';
 import { useGroups } from '@/src/api/services/firestore/rankingService';
 import EventCard from '@/src/components/Event/EventCard';
+import { buildTournamentBracket, BracketMatch } from '@/src/components/TournamentBracket';
+import TournamentBracket from '@/src/components/TournamentBracket/TournamentBracket';
 import { translatePhase } from '@/src/utils/matchMetadataTranslator';
+import { router } from 'expo-router';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -13,47 +16,69 @@ interface SportMatchesTabProps {
 }
 
 const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}) => {
-    const [matches, setMatches] = useState([]);
+    const [matches, setMatches] = useState<any[]>([]);
+    const [allAvailablePhases, setAllAvailablePhases] = useState<Set<string>>(new Set());
     const [refreshing, setRefreshing] = useState(false);
     const [lastDoc, setLastDoc] = useState<any | null>(null);
     const [hasMore, setHasMore] = useState(true);
-    const [selectedPhase, setSelectedPhase] = useState<string | null>(null);
+    const [selectedPhaseId, setSelectedPhaseId] = useState<string | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
+    const [showBracket, setShowBracket] = useState(false);
+    const [bracket, setBracket] = useState<any>(null);
 
     // Récupérer tous les groupes pour cette compétition
     const { data: groups = [] } = useGroups(sport_id, category_id);
+    
+    // Récupérer tous les matchs des phases finales avec React Query
+    const { data: allFinalMatches = [], isLoading: loadingBracket } = useAllFinalPhaseMatches(sport_id, category_id);
 
-    // Liste des phases possibles
+    // Déterminer quelles phases ont réellement des matchs
+    // Mettre à jour quand tous les matchs sont chargés (pas de phase sélectionnée) ou quand sport/category change
+    useEffect(() => {
+        if (matches.length > 0 && selectedPhaseId === null) {
+            const phase_ids = new Set<string>();
+            matches.forEach((match) => {
+                const phase_id = match.phase || match.phase_id;
+                if (phase_id) {
+                    phase_ids.add(phase_id);
+                }
+            });
+            setAllAvailablePhases(phase_ids);
+        }
+    }, [matches, selectedPhaseId, sport_id, category_id]);
+
+    // Liste des phases possibles - filtrée pour n'inclure que celles qui ont des matchs
+    // Toujours inclure 'Toutes les phases'
     const allPhases = [
         { id: null, label: 'Toutes les phases' },
-        { id: 'gs', label: 'Phase de groupes' },
-        { id: '16f', label: 'Seizième de finale' },
-        { id: '8f', label: 'Huitième de finale' },
-        { id: '4f', label: 'Quart de finale' },
-        { id: '2f', label: 'Demi-finale' },
-        { id: '3f', label: 'Match pour la 3ème place' },
-        { id: 'f', label: 'Finale' },
-        { id: 'q', label: 'Qualifications' },
-        { id: 'p', label: 'Matchs de placement' },
-        { id: 'c', label: 'Consolante' }
+        ...(allAvailablePhases.has('gs') ? [{ id: 'gs', label: 'Phase de groupes' }] : []),
+        ...(allAvailablePhases.has('16f') ? [{ id: '16f', label: 'Seizième de finale' }] : []),
+        ...(allAvailablePhases.has('8f') ? [{ id: '8f', label: 'Huitième de finale' }] : []),
+        ...(allAvailablePhases.has('4f') ? [{ id: '4f', label: 'Quart de finale' }] : []),
+        ...(allAvailablePhases.has('2f') ? [{ id: '2f', label: 'Demi-finale' }] : []),
+        ...(allAvailablePhases.has('3f') ? [{ id: '3f', label: 'Match pour la 3ème place' }] : []),
+        ...(allAvailablePhases.has('f') ? [{ id: 'f', label: 'Finale' }] : []),
+        ...(allAvailablePhases.has('q') ? [{ id: 'q', label: 'Qualifications' }] : []),
+        ...(allAvailablePhases.has('p') ? [{ id: 'p', label: 'Matchs de placement' }] : []),
+        ...(allAvailablePhases.has('c') ? [{ id: 'c', label: 'Consolante' }] : [])
     ];
 
     useEffect(() => {
         fetchMatches(sport_id);
     }, []);
 
-    const fetchMatches = async (sport_id: string, phase?: string | null) => {
+    const fetchMatches = async (sport_id: string, phase_id?: string | null) => {
         setRefreshing(true);
         setLastDoc(null);
         setHasMore(true);
         
         try {
             let result;
-            if (phase) {
+            if (phase_id) {
                 result = await getMatchesFromSportIdAndCategoryIdAndPhaseId({
                     sportId: sport_id,
                     categoryId: category_id,
-                    phaseId: phase,
+                    phaseId: phase_id,
                     lastDoc: null
                 });
             } else {
@@ -71,17 +96,33 @@ const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}
         setRefreshing(false);
     };
 
-    const handlePhaseSelect = (phase: string | null) => {
-        setSelectedPhase(phase);
+    const handlePhaseSelect = (phase_id: string | null) => {
+        setSelectedPhaseId(phase_id);
         setModalVisible(false);
-        fetchMatches(sport_id, phase);
+        setShowBracket(false); // Réinitialiser la vue bracket quand on change de phase
+        fetchMatches(sport_id, phase_id);
+    };
+
+    /**
+     * Met à jour l'affichage du bracket
+     * Avec React Query, les données sont déjà fetchées automatiquement
+     */
+    const toggleBracketView = () => {
+        if (showBracket) {
+            setShowBracket(false);
+        } else {
+            // Construire le bracket avec les matchs déjà fetchés par React Query
+            const bracketData = buildTournamentBracket(allFinalMatches);
+            setBracket(bracketData);
+            setShowBracket(true);
+        }
     };
 
     const turnIntoSectionList = (matches: any[]) => {
         let sectionList: { title: string; data: any[] }[] = [];
         
         // Si la phase sélectionnée est 'gs', on regroupe par group_id
-        if (selectedPhase === 'gs') {
+        if (selectedPhaseId === 'gs') {
             const groupsMap: { [key: string]: any[] } = {};
             
             matches.forEach((match) => {
@@ -112,27 +153,26 @@ const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}
             let sections: { [key: string]: any[] } = {};
 
             matches.forEach((match) => {
-                const phase = match.phase;
+                const phase_id = match.phase_id;
 
-                if (!sections[phase]) {
-                    sections[phase] = [];
+                if (!sections[phase_id]) {
+                    sections[phase_id] = [];
                 }
 
-                sections[phase].push(match);
+                sections[phase_id].push(match);
             });
 
             // Trier par phase, puis trier les matches dans chaque phase par start_time
-            Object.keys(sections).sort().forEach((phase) => {
-                const sortedMatches = sections[phase].sort((a, b) => 
+            Object.keys(sections).sort().forEach((phase_id) => {
+                const sortedMatches = sections[phase_id].sort((a, b) => 
                     new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
                 );
                 sectionList.push({
-                    title: phase,
+                    title: phase_id,
                     data: sortedMatches
                 });
             });
         }
-
         return sectionList;
     };
 
@@ -142,11 +182,11 @@ const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}
 
         try {
             let result;
-            if (selectedPhase) {
+            if (selectedPhaseId) {
                 result = await getMatchesFromSportIdAndCategoryIdAndPhaseId({
                     sportId: sport_id,
                     categoryId: category_id,
-                    phaseId: selectedPhase,
+                    phaseId: selectedPhaseId,
                     lastDoc
                 });
             } else {
@@ -169,38 +209,61 @@ const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}
     const sectionListData = turnIntoSectionList(matches);
 
     // Trouver le label de la phase sélectionnée
-    const selectedPhaseLabel = allPhases.find(p => p.id === selectedPhase)?.label || 'Toutes les phases';
+    const selectedPhaseLabel = allPhases.find(p => p.id === selectedPhaseId)?.label || 'Toutes les phases';
 
     return (
         <View style={styles.container}>
-            {/* Dropdown pour sélectionner la phase */}
-            <View style={styles.dropdownContainer}>
-                <TouchableOpacity 
-                    style={styles.dropdownButton}
-                    onPress={() => setModalVisible(true)}
+            {/* Header avec dropdown et bouton bracket */}
+            <View style={styles.headerContainer}>
+                <View style={styles.dropdownContainer}>
+                    <TouchableOpacity 
+                        style={styles.dropdownButton}
+                        onPress={() => setModalVisible(true)}
+                    >
+                        <Text style={styles.dropdownButtonText}>{selectedPhaseLabel}</Text>
+                    </TouchableOpacity>
+                </View>
+                
+                {/* Bouton pour basculer entre liste et arbre */}
+                <TouchableOpacity
+                    style={[styles.bracketButton, loadingBracket && styles.bracketButtonDisabled]}
+                    onPress={toggleBracketView}
+                    disabled={loadingBracket}
                 >
-                    <Text style={styles.dropdownButtonText}>{selectedPhaseLabel}</Text>
+                    <Text style={styles.bracketButtonText}>
+                        {loadingBracket ? 'Chargement...' : showBracket ? 'Vue Liste' : 'Vue Arbre'}
+                    </Text>
                 </TouchableOpacity>
             </View>
 
-            <SectionList
-                onRefresh={() => fetchMatches(sport_id, selectedPhase)}
-                refreshing={refreshing}
-                style={{ width: '100%', padding: 10}}
-                sections={sectionListData}
-                onEndReached={loadMoreEvents}
-                onEndReachedThreshold={0.5}
-                renderItem={({ item }) => (
-                    <EventCard event={item} />
-                )}
-                renderSectionHeader={({ section: { title } }) => (
-                    <View style={{ margin: 10 }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 20 }}>
-                            {selectedPhase === 'gs' ? title : translatePhase(title)}
-                        </Text>
-                    </View>
-                )}
-            />
+            {/* Affichage conditionnel : Bracket ou Liste */}
+            {showBracket ? (
+                <TournamentBracket 
+                    allMatches={allFinalMatches}
+                    onMatchPress={(match: BracketMatch) => {
+                        router.push(`/matches/head_to_head/${match.id}`);
+                    }}
+                />
+            ) : (
+                <SectionList
+                    onRefresh={() => fetchMatches(sport_id, selectedPhaseId)}
+                    refreshing={refreshing}
+                    style={{ width: '100%'}}
+                    sections={sectionListData}
+                    onEndReached={loadMoreEvents}
+                    onEndReachedThreshold={0.5}
+                    renderItem={({ item }) => (
+                        <EventCard event={item} />
+                    )}
+                    renderSectionHeader={({ section: { title } }) => (
+                        <View style={{ padding: 10, backgroundColor: 'rgba(240, 240, 240, 0.75)'}}>
+                            <Text style={{ fontWeight: 'bold', fontSize: 20 }}>
+                                {selectedPhaseId === 'gs' ? title : translatePhase(title)}
+                            </Text>
+                        </View>
+                    )}
+                />
+            )}
 
             {/* Modal pour le dropdown */}
             <Modal
@@ -246,15 +309,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    scrollView: {
-        flex: 1,
-    },
-    dropdownContainer: {
+    headerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         width: '100%',
         padding: 10,
         backgroundColor: '#f5f5f5',
         borderBottomWidth: 1,
         borderBottomColor: '#ddd',
+        justifyContent: 'space-between',
+    },
+    dropdownContainer: {
+        flex: 1,
+        marginRight: 10,
     },
     dropdownButton: {
         backgroundColor: '#fff',
@@ -271,6 +338,26 @@ const styles = StyleSheet.create({
     dropdownButtonText: {
         fontSize: 16,
         color: '#333',
+    },
+    bracketButton: {
+        backgroundColor: '#4287f5',
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    bracketButtonText: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: '600',
+    },
+    bracketButtonDisabled: {
+        backgroundColor: '#cccccc',
+        opacity: 0.7,
     },
     modalOverlay: {
         flex: 1,

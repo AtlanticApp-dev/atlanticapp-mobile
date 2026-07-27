@@ -1,4 +1,5 @@
 import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, query, limit, orderBy, startAfter, where } from "@react-native-firebase/firestore";
+import { useQuery } from "@tanstack/react-query";
 
 const db = getFirestore();
 
@@ -202,7 +203,7 @@ export const getMatchesFromSportIdAndCategoryIdAndPhaseId = async ({sportId, cat
             collection(getFirestore(), 'matches'),
             where('sport_id', '==', sportId),
             where('category_id', '==', categoryId),
-            where('phase', '==', phaseId),
+            where('phase_id', '==', phaseId),
             orderBy('start_time', 'asc'),
             limit(limitCount)
         );
@@ -238,4 +239,56 @@ export const getMatchesFromSportIdAndCategoryIdAndPhaseId = async ({sportId, cat
         console.error("Erreur lors de la récupération des matchs avec phase:", error);
         throw error;
     }
+};
+
+/**
+ * Récupère tous les matchs des phases finales pour un sport et une catégorie
+ * Utilise des requêtes parallèles pour un chargement plus rapide
+ */
+export const getAllFinalPhaseMatches = async (sportId: string, categoryId: string): Promise<Match[]> => {
+    const finalPhases = ['16f', '8f', '4f', '2f', '3f', 'f'];
+    
+    try {
+        // Requêtes parallèles pour toutes les phases
+        const promises = finalPhases.map(phase_id => 
+            getMatchesFromSportIdAndCategoryIdAndPhaseId({
+                sportId,
+                categoryId,
+                phaseId: phase_id,
+                limitCount: 1000 // Grand nombre pour récupérer tous les matchs
+            }).then(result => result.matches)
+        );
+        
+        // Attendre toutes les promesses
+        const results = await Promise.all(promises);
+        
+        // Fusionner tous les matchs
+        const allMatches: Match[] = [];
+        for (const matches of results) {
+            if (matches && matches.length > 0) {
+                allMatches.push(...matches);
+            }
+        }
+        
+        // Trier par start_time pour avoir un ordre chronologique global
+        return allMatches.sort((a, b) => 
+            new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+        );
+    } catch (error) {
+        console.error("Erreur lors de la récupération de tous les matchs des phases finales:", error);
+        throw error;
+    }
+};
+
+/**
+ * Hook React Query pour récupérer tous les matchs des phases finales
+ * Utilise getAllFinalPhaseMatches avec cache et requêtes parallèles
+ */
+export const useAllFinalPhaseMatches = (sportId: string, categoryId: string) => {
+    return useQuery({
+        queryKey: ['allFinalPhaseMatches', sportId, categoryId],
+        queryFn: () => getAllFinalPhaseMatches(sportId, categoryId),
+        enabled: !!sportId && !!categoryId,
+        staleTime: 5 * 60 * 1000, // 5 minutes de cache
+    });
 };
