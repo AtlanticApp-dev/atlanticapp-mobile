@@ -15,8 +15,8 @@ export const translateStatus = (status: string): string => {
     }
 };
 
-export const translatePhase = (phase: string): string => {
-    switch (phase) {
+export const translatePhase = (phase_id: string): string => {
+    switch (phase_id) {
         case 'f':
             return "Finale";
         case '2f':

@@ -5,7 +5,7 @@ import { useTeam } from '@/src/api/services/firestore/teamsService';
 import { useDelegation } from '@/src/api/services/firestore/delegationService';
 import { usePlace} from '@/src/api/services/firestore/placeService';
 import { translateStatus } from '@/src/utils/matchMetadataTranslator';
-import { useSport} from '@/src/api/services/firestore/sportsService';
+import { useSport } from '@/src/api/services/firestore/sportsService';
 import { useCategory } from '@/src/api/services/firestore/categoryService';
 
 interface Match {
