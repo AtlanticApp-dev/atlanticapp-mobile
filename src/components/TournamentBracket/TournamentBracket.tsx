@@ -12,6 +12,70 @@ const ROUND_SPACING = 60;
 const MATCH_VERTICAL_SPACING = 20;
 const CONNECTOR_COLOR = '#ccc';
 
+/**
+ * Compare deux scores et détermine le gagnant
+ * Pour les scores simples (number) : comparaison directe
+ * Pour les scores en sets (array) : compte le nombre de sets gagnés
+ * Retourne 'team1', 'team2', ou null en cas d'égalité ou de scores indéfinis
+ */
+const determineWinnerFromScores = (score1: ScoreType, score2: ScoreType): 'team1' | 'team2' | null => {
+  // Si les scores sont indéfinis, on ne peut pas déterminer le gagnant
+  if (score1 === undefined || score1 === null || score2 === undefined || score2 === null) {
+    return null;
+  }
+
+  // Cas 1 : Les deux scores sont des arrays (scores en sets)
+  if (Array.isArray(score1) && Array.isArray(score2)) {
+    // Compter le nombre de sets gagnés par chaque équipe
+    let team1Wins = 0;
+    let team2Wins = 0;
+    
+    const maxSets = Math.max(score1.length, score2.length);
+    
+    for (let i = 0; i < maxSets; i++) {
+      const s1 = score1[i] || 0;
+      const s2 = score2[i] || 0;
+      
+      if (s1 > s2) {
+        team1Wins++;
+      } else if (s2 > s1) {
+        team2Wins++;
+      }
+    }
+    
+    if (team1Wins > team2Wins) return 'team1';
+    if (team2Wins > team1Wins) return 'team2';
+    return null; // Égalité
+  }
+
+  // Cas 2 : Les deux scores sont des nombres (scores simples)
+  if (typeof score1 === 'number' && typeof score2 === 'number') {
+    if (score1 > score2) return 'team1';
+    if (score2 > score1) return 'team2';
+    return null; // Égalité
+  }
+
+  // Cas 3 : Types incompatibles, on ne peut pas comparer
+  return null;
+};
+
+/**
+ * Formate un score pour l'affichage
+ * Score simple : affiche le nombre
+ * Score en sets : affiche les sets séparés par des tirets
+ */
+const formatScore = (score: ScoreType): string => {
+  if (score === undefined || score === null) {
+    return '';
+  }
+  
+  if (Array.isArray(score)) {
+    return score.join('-');
+  }
+  
+  return score.toString();
+};
+
 // Calcule la position Y du centre d'un match pour un alignement en pyramide
 // totalHeight = matchCount * (MATCH_CARD_HEIGHT + MATCH_VERTICAL_SPACING)
 // matchIndex = index du match dans sa phase
@@ -33,11 +97,14 @@ const calculateMatchTopPosition = (
   return calculateMatchCenterY(totalHeight, matchIndex, matchCount) - (MATCH_CARD_HEIGHT / 2);
 };
 
+// Type pour les scores (simple ou en sets)
+type ScoreType = number | number[] | null | undefined;
+
 // Interface pour une équipe
 interface TeamInfo {
   id: string;
   name: string;
-  score?: number | null;
+  score?: ScoreType;
 }
 
 // Interface pour un match dans le bracket
@@ -46,6 +113,8 @@ interface BracketMatch {
   phase: string;
   team1: TeamInfo | null;
   team2: TeamInfo | null;
+  team1_score?: ScoreType;
+  team2_score?: ScoreType;
   start_time?: Date | string | null;
   status: 'incoming' | 'live' | 'completed' | 'cancelled' | 'postponed';
   winner_id?: string | null;
@@ -72,7 +141,7 @@ interface TournamentBracketProps {
 }
 
 // Ordre des phases de la plus précoce à la plus tardive
-const PHASE_ORDER = ['16f', '8f', '4f', '2f', '3f', 'f'];
+const PHASE_ORDER = ['16f', '8f', '4f', '2f', 'f', '3f'];
 
 // Phases considérées comme finales pour l'arbre
 const FINAL_PHASES = new Set(['16f', '8f', '4f', '2f', '3f', 'f']);
@@ -110,6 +179,8 @@ const createBlankMatch = (phase: string, matchNumber: number): BracketMatch => (
 const createMatchFromData = (matchData: any, matchNumber: number): BracketMatch => {
   let team1: TeamInfo | null = null;
   let team2: TeamInfo | null = null;
+  let team1_score: ScoreType = undefined;
+  let team2_score: ScoreType = undefined;
   
   if (matchData.teams && Array.isArray(matchData.teams) && matchData.teams.length >= 2) {
     team1 = {
@@ -122,6 +193,8 @@ const createMatchFromData = (matchData: any, matchNumber: number): BracketMatch 
       name: matchData.teams[1].name || matchData.teams[1].title || `Équipe 2`,
       score: matchData.teams[1].score,
     };
+    team1_score = matchData.teams[0].score;
+    team2_score = matchData.teams[1].score;
   } else {
     team1 = matchData.team1_id ? {
       id: matchData.team1_id,
@@ -134,16 +207,21 @@ const createMatchFromData = (matchData: any, matchNumber: number): BracketMatch 
       name: matchData.team2?.name || matchData.team2?.title || `Équipe 2`,
       score: matchData.team2_score,
     } : null;
+    
+    team1_score = matchData.team1_score;
+    team2_score = matchData.team2_score;
   }
 
   let winner_id: string | null = null;
   if (matchData.status === 'completed') {
     if (matchData.winner_id) {
       winner_id = matchData.winner_id;
-    } else if (matchData.team1_score !== undefined && matchData.team2_score !== undefined) {
-      if (matchData.team1_score > matchData.team2_score) {
+    } else {
+      // Déterminer le gagnant à partir des scores (simples ou en sets)
+      const winner = determineWinnerFromScores(team1_score, team2_score);
+      if (winner === 'team1') {
         winner_id = team1?.id || null;
-      } else if (matchData.team2_score > matchData.team1_score) {
+      } else if (winner === 'team2') {
         winner_id = team2?.id || null;
       }
     }
@@ -154,8 +232,8 @@ const createMatchFromData = (matchData: any, matchNumber: number): BracketMatch 
     phase: matchData.phase || matchData.phase_id,
     team1,
     team2,
-    team1_score: matchData.team1_score,
-    team2_score: matchData.team2_score,
+    team1_score,
+    team2_score,
     start_time: matchData.start_time,
     status: matchData.status || 'incoming',
     winner_id: winner_id,
@@ -186,9 +264,14 @@ export const buildTournamentBracket = (matches: any[]): BracketTree => {
     matchesByPhase[phase].push(match);
   });
 
-  // Déterminer quelles phases sont présentes (au moins un match avec match_number défini)
+  // Déterminer quelles phases sont présentes
+  // Pour 'f' et '3f' (1 seul match attendu), on vérifie juste la présence de matchs
+  // Pour les autres phases, on exige au moins un match avec match_number défini
   const presentPhases = PHASE_ORDER.filter(phase => {
     const phaseMatches = matchesByPhase[phase] || [];
+    if (phase === 'f' || phase === '3f') {
+      return phaseMatches.length > 0;
+    }
     return phaseMatches.some(m => m.match_number !== undefined && m.match_number !== null);
   });
   
@@ -210,44 +293,64 @@ export const buildTournamentBracket = (matches: any[]): BracketTree => {
   for (const phase of phasesToDisplay) {
     const phaseMatches = matchesByPhase[phase] || [];
     
-    // Filtrer les matchs qui ont un match_number défini et les trier par match_number croissant
-    const matchesWithNumber = phaseMatches.filter(m => m.match_number !== undefined && m.match_number !== null);
-    const sortedMatches = [...matchesWithNumber].sort((a, b) => (a.match_number || 0) - (b.match_number || 0));
+    // Pour 'f' et '3f' (1 seul match attendu), on ne nécessite pas match_number
+    const isFinalPhase = phase === 'f' || phase === '3f';
     
-    // Déterminer le nombre attendu de matchs pour cette phase
-    // Si des matchs avec match_number existent, utiliser le max match_number
-    // mais ne pas dépasser la limite maximale autorisée pour la phase
-    let expectedForPhase = expectedMatchesPerPhase[phase] || expectedCount / 2;
-    if (sortedMatches.length > 0) {
-      const maxMatchNumber = Math.max(...sortedMatches.map(m => m.match_number || 0));
-      const maxAllowed = expectedMatchesPerPhase[phase];
-      // Limiter expectedForPhase à la valeur maximale autorisée pour la phase
-      expectedForPhase = maxAllowed 
-        ? Math.min(Math.max(expectedForPhase, maxMatchNumber), maxAllowed)
-        : Math.max(expectedForPhase, maxMatchNumber);
-    }
-    
-    // Créer les matchs pour ce round
-    const bracketMatches: BracketMatch[] = [];
-    
-    // Créer les matchs réels ou des placeholders en utilisant match_number
-    for (let i = 0; i < expectedForPhase; i++) {
-      // Trouver le match avec match_number = i+1 (car match_number commence à 1)
-      const matchWithNumber = sortedMatches.find(m => m.match_number === i + 1);
+    if (isFinalPhase) {
+      // Pour finale et 3ème place : prendre le premier match disponible ou créer un blank
+      const bracketMatches: BracketMatch[] = [];
+      const expectedForPhase = 1;
       
-      if (matchWithNumber) {
-        bracketMatches.push(createMatchFromData(matchWithNumber, i + 1));
+      if (phaseMatches.length > 0) {
+        // Utiliser le premier match trouvé (avec ou sans match_number)
+        bracketMatches.push(createMatchFromData(phaseMatches[0], 1));
       } else {
-        bracketMatches.push(createBlankMatch(phase, i + 1));
+        bracketMatches.push(createBlankMatch(phase, 1));
       }
-    }
+      
+      if (bracketMatches.length > 0) {
+        rounds.push({
+          phase,
+          label: translatePhase(phase),
+          matches: bracketMatches,
+        });
+      }
+    } else {
+      // Pour les autres phases : utiliser match_number
+      const matchesWithNumber = phaseMatches.filter(m => m.match_number !== undefined && m.match_number !== null);
+      const sortedMatches = [...matchesWithNumber].sort((a, b) => (a.match_number || 0) - (b.match_number || 0));
+      
+      // Déterminer le nombre attendu de matchs pour cette phase
+      let expectedForPhase = expectedMatchesPerPhase[phase] || expectedCount / 2;
+      if (sortedMatches.length > 0) {
+        const maxMatchNumber = Math.max(...sortedMatches.map(m => m.match_number || 0));
+        const maxAllowed = expectedMatchesPerPhase[phase];
+        // Limiter expectedForPhase à la valeur maximale autorisée pour la phase
+        expectedForPhase = maxAllowed 
+          ? Math.min(Math.max(expectedForPhase, maxMatchNumber), maxAllowed)
+          : Math.max(expectedForPhase, maxMatchNumber);
+      }
+      
+      // Créer les matchs pour ce round
+      const bracketMatches: BracketMatch[] = [];
+      
+      for (let i = 0; i < expectedForPhase; i++) {
+        const matchWithNumber = sortedMatches.find(m => m.match_number === i + 1);
+        
+        if (matchWithNumber) {
+          bracketMatches.push(createMatchFromData(matchWithNumber, i + 1));
+        } else {
+          bracketMatches.push(createBlankMatch(phase, i + 1));
+        }
+      }
 
-    if (bracketMatches.length > 0) {
-      rounds.push({
-        phase,
-        label: translatePhase(phase),
-        matches: bracketMatches,
-      });
+      if (bracketMatches.length > 0) {
+        rounds.push({
+          phase,
+          label: translatePhase(phase),
+          matches: bracketMatches,
+        });
+      }
     }
 
     expectedCount = Math.ceil(expectedCount / 2);
@@ -524,7 +627,6 @@ const BracketMatchCard: React.FC<BracketMatchCardProps> = ({ match, onPress }) =
     ? (match.team1?.id === match.winner_id ? match.team1 : match.team2)
     : null;
 
-
   return (
     <TouchableOpacity
       style={[
@@ -547,8 +649,8 @@ const BracketMatchCard: React.FC<BracketMatchCardProps> = ({ match, onPress }) =
         >
           {delegation1?.title ? `${delegation1.title} ${team1?.description || ''}` : 'Non défini'}
         </Text>
-        {match.team1_score !== undefined && (
-          <Text style={styles.score}>{match.team1_score}</Text>
+        {(match.team1_score !== undefined && match.team1_score !== null) && (
+          <Text style={styles.score}>{formatScore(match.team1_score)}</Text>
         )}
       </View>
 
@@ -563,8 +665,8 @@ const BracketMatchCard: React.FC<BracketMatchCardProps> = ({ match, onPress }) =
         >
           {delegation2?.title ? `${delegation2.title} ${team2?.description || ''}` : 'Non défini'}
         </Text>
-        {match.team2_score !== undefined && (
-          <Text style={styles.score}>{match.team2_score}</Text>
+        {(match.team2_score !== undefined && match.team2_score !== null) && (
+          <Text style={styles.score}>{formatScore(match.team2_score)}</Text>
         )}
       </View>
 
@@ -683,7 +785,6 @@ const styles = StyleSheet.create({
   },
   teamLost: {
     color: '#999',
-    textDecorationLine: 'line-through',
   },
   score: {
     fontSize: 16,
