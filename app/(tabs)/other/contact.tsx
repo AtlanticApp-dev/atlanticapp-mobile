@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Clipboard from '@react-native-clipboard/clipboard';
 
 
@@ -10,10 +9,9 @@ export default function ContactPage() {
         Linking.openURL(url);
     };
 
-    const insets = useSafeAreaInsets();
 
     return (
-        <ScrollView style={styles.container} contentInset={{ bottom: insets.bottom +50}}>
+        <ScrollView style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.title}>Contact / Réseaux sociaux</Text>
             </View>

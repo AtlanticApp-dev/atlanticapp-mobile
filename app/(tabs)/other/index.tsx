@@ -6,7 +6,6 @@ import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { getAllDelegations } from '@/src/api/services/firestore/delegationService';
 import { getAllRawSports } from '@/src/api/services/firestore/sportsService';
 import { router } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ScreenLoader from '@/src/components/ScreenLoader';
 import { getUserFromUid, updateUserFollowedSports } from '@/src/api/services/firestore/usersService';
 import { logOut } from '@/src/api/services/auth/authService';
@@ -51,8 +50,6 @@ const ProfileScreen: React.FC = () => {
     
     const [currentUser, setCurrentUser] = useState<any>(null);
     const [initializing, setInitializing] = useState<boolean>(true);
-
-    const insets = useSafeAreaInsets();
 
     const onAuthStateChanged = async (user: FirebaseAuthTypes.User | null) => {
         setLoadingUser(true);
@@ -191,7 +188,7 @@ const ProfileScreen: React.FC = () => {
     
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <SafeAreaView style={[styles.container,{paddingBottom: insets.bottom}]}>
+            <SafeAreaView style={styles.container}>
                 <View style={styles.logo_container}> 
                     <Image source={require('@/assets/images/logo-atlanticup-no-background.png')} style={{ width: width * 0.6, height: width * 0.5}} />
                 </View>

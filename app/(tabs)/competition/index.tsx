@@ -4,7 +4,6 @@ import { getAllRawSports } from '@/src/api/services/firestore/sportsService';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ScreenLoader from '@/src/components/ScreenLoader';
 import SportItem from '@/src/components/Competition/SportItem';
 import { getCategoriesFromSportId } from '@/src/api/services/firestore/categoryService';
@@ -25,8 +24,6 @@ const CompetitionScreen: React.FC<{}> = () => {
     const [sports, setSports] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
-    const insets = useSafeAreaInsets();
-    
 
     useEffect(() => {
         refresh();
@@ -44,7 +41,7 @@ const CompetitionScreen: React.FC<{}> = () => {
     };
 
     return (
-        <SafeAreaView style={[styles.container, {paddingBottom: insets.bottom}]}>
+        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
             {loading ? (
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                     <View style={{height:200, width:200}}>
