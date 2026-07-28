@@ -50,6 +50,17 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
+          name="pronos"
+          options={{
+        title: 'Pronos',
+        tabBarIcon: ({ color }) => 
+          <Image 
+              source={require('@/assets/images/icons/tabBar/pronos.png')} 
+              style={{ width: 28, height: 28, tintColor: color }} 
+            />,
+          }}
+        />
+        <Tabs.Screen
           name="map"
           options={{
         title: 'Carte',

@@ -129,3 +129,56 @@ export interface User {
     supported_delegation_id : string;
     followed_sport_ids : string[];
 }
+
+// ============ PRONOS TYPES ============
+
+export type BetStatus = 'pending' | 'won' | 'lost' | 'calculating';
+
+export interface Bet {
+    id: string;
+    user_id: string;
+    match_id: string;
+    predicted_team1_score: number;
+    predicted_team2_score: number | number[]; // number[] for sports like badminton (sets)
+    created_at: Date;
+    updated_at: Date;
+    points: number;
+    status: BetStatus;
+}
+
+export interface BetUserStats {
+    user_id: string;
+    total_bets: number;
+    correct_predictions: number;
+    total_points: number;
+    ranking_position: number;
+    last_updated: Date;
+}
+
+export interface LeaderboardEntry {
+    user_id: string;
+    display_name: string;
+    delegation_id?: string;
+    total_points: number;
+    total_bets: number;
+    correct_predictions: number;
+    position: number;
+    avatar?: string;
+    sport_id?: string; // For sport-specific leaderboards
+}
+
+export interface PronosMatch extends Match {
+    user_bet?: {
+        bet_id: string;
+        predicted_team1_score: number;
+        predicted_team2_score: number | number[];
+        points: number;
+        status: BetStatus;
+    };
+}
+
+export interface SportLeaderboard {
+    sport_id: string;
+    sport_title: string;
+    entries: LeaderboardEntry[];
+}
