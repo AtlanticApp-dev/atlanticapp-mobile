@@ -2,7 +2,6 @@ import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, dele
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bet, LeaderboardEntry, SportLeaderboard, BetUserStats, PronosMatch, BetStatus } from "@/types/models";
 import { getMatchFromId } from "./matchService";
-import auth from '@react-native-firebase/auth';
 import { getUserFromUid } from "./usersService";
 
 const db = getFirestore();

@@ -60,39 +60,39 @@ const PronosHomeScreen: React.FC = () => {
   if (onboardingCompleted === null) {
     // Loading onboarding status
     return (
-      <SafeAreaView style={[styles.container, isDark && styles.containerDark]}>
+      <View style={[styles.container, isDark && styles.containerDark]}>
         <ScreenLoader />
-      </SafeAreaView>
+      </View>
     );
   }
 
   // Show onboarding if not completed
   if (!onboardingCompleted) {
     return (
-      <SafeAreaView style={[styles.container, isDark && styles.containerDark]}>
+      <View style={[styles.container, isDark && styles.containerDark]}>
         <Onboarding onComplete={handleOnboardingComplete} />
-      </SafeAreaView>
+      </View>
     );
   }
 
   // Loading data
   if (isLoadingGeneral || isLoadingSports) {
     return (
-      <SafeAreaView style={[styles.container, isDark && styles.containerDark]}>
+      <View style={[styles.container, isDark && styles.containerDark]}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
         >
           <ScreenLoader />
         </ScrollView>
-      </SafeAreaView>
+      </View>
     );
   }
 
   // No leaderboard data available
   if (!generalLeaderboard) {
     return (
-      <SafeAreaView style={[styles.container, isDark && styles.containerDark]}>
+      <View style={[styles.container, isDark && styles.containerDark]}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
@@ -123,12 +123,12 @@ const PronosHomeScreen: React.FC = () => {
             </View>
           )}
         </ScrollView>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={[styles.container, isDark && styles.containerDark]}>
+    <View style={[styles.container, isDark && styles.containerDark]}>
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
@@ -200,7 +200,7 @@ const PronosHomeScreen: React.FC = () => {
           </View>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
