@@ -36,7 +36,7 @@ export default ({ config }) => ({
         apiKey: process.env.GOOGLE_MAPS_API_KEY
       }
     },
-    package: IS_PROD ? "fr.resel.bds.brest.atlanticapp" : "fr.resel.bds.brest.atlanticapp.test",
+    package: IS_PROD ? "fr.resel.bds.brest.atlanticapp.android" : "fr.resel.bds.brest.atlanticapp.test",
     googleServicesFile: IS_PROD ? "./firebase-config/prod/google-services.json" : "./firebase-config/test/google-services.json"
   },
 
