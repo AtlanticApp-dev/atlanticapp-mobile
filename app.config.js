@@ -6,7 +6,7 @@ export default ({ config }) => ({
   ...config,
   name: IS_PROD ? "AtlanticApp" : "AtlanticApp (Test)",
   slug: "AtlanticApp",
-  version: "2.1.3",
+  version: "2.2.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: "myapp",
