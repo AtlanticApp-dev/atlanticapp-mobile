@@ -16,9 +16,11 @@ const images = {
     'ultimate' : require('@/assets/images/sports/blurred_background/ultimate.jpg'),
     'table_tennis' : require('@/assets/images/sports/blurred_background/tennis_de_table.jpg'),
     'climbing' : require('@/assets/images/sports/blurred_background/escalade.jpg'),
-    'molkky' : require('@/assets/images/sports/blurred_background/molkky.jpg'),
+    'molkky' : require('@/assets/images/sports/blurred_background/default.jpg'),
     'petanque' : require('@/assets/images/sports/blurred_background/petanque.jpg'),
     'trail' : require('@/assets/images/sports/blurred_background/trail.jpg'),
+    'spike_ball': require('@/assets/images/sports/blurred_background/default.jpg'),
+    'chess': require('@/assets/images/sports/blurred_background/default.jpg')
 }
 
 type Sport = {
