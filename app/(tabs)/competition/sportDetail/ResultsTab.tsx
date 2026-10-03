@@ -14,15 +14,18 @@ const ResultsTab: React.FC<ResultsTabProps> = ({sport_id, category_id}) => {
 
     const {
         data: category,
+        refetch: refetchCategory,
     } = useCategory(sport_id, category_id);
 
     const {
         data: groups,
+        refetch: refetchGroups,
         isLoading: isGroupsLoading,
     } = useGroups(sport_id, category_id);
 
     const {
         data: finalRanking,
+        refetch: refetchFinalRanking,
         isLoading: isFinalRankingLoading,
     } = useFinalRanking(sport_id, category_id);
 
@@ -36,11 +39,17 @@ const ResultsTab: React.FC<ResultsTabProps> = ({sport_id, category_id}) => {
             <GroupRanking groupData={group} key={index} />
         );
     };
+
+    const handleRefresh = () => {
+        refetchGroups();
+        refetchFinalRanking();
+        refetchCategory();
+    };
     
     return (
         <View style={styles.main_container}>
             <ScrollView
-                refreshControl={<RefreshControl refreshing={isGroupsLoading || isFinalRankingLoading}/>}
+                refreshControl={<RefreshControl refreshing={isGroupsLoading || isFinalRankingLoading} onRefresh={handleRefresh} />}
             >
                 {groups?.map((group, index) => (
                     renderGroup(group, index)
