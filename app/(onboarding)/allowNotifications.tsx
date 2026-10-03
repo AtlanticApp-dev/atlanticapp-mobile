@@ -1,68 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import messaging from '@react-native-firebase/messaging';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { checkNotificationPermission } from '@/src/api/services/messaging/fcmService';
 
 const AllowNotifications = () => {
     const router = useRouter();
-    const [permissionGranted, setPermissionGranted] = useState(false);
-
-    useEffect(() => {
-        checkPermission();
-    }, []);
-
-    const checkPermission = async () => {
-        const authStatus = await messaging().hasPermission();
-        const enabled = 
-            authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-            authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-        
-        setPermissionGranted(enabled);
-    };
-
-    const requestPermission = async () => {
-        try {
-            const authStatus = await messaging().requestPermission();
-            const enabled = 
-                authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-                authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-            
-            setPermissionGranted(enabled);
-            
-            if (enabled) {
-                getFcmToken();
-            }
-        } catch (error) {
-            console.log('Permission request failed', error);
-        }
-    };
-
-    const getFcmToken = async () => {
-        try {
-            const token = await messaging().getToken();
-            if (token) {
-                console.log('FCM Token:', token);
-                // TODO: Send token to your server
-            }
-        } catch (error) {
-            console.log('Error getting FCM token:', error);
-        }
-    };
 
     const handleContinue = async () => {
-        if (permissionGranted) {
-            await AsyncStorage.setItem('hasSeenOnboarding', 'true'); // Save preference
-            router.replace('/(tabs)/calendar'); // Navigate to the next screen
-        } else {
-            requestPermission();
-        }
+        await AsyncStorage.setItem('hasSeenOnboarding', 'true');
+        checkNotificationPermission();
+        router.replace('/(tabs)/calendar');
     };
 
     const handleSkip = async () => {
-        await AsyncStorage.setItem('hasSeenOnboarding', 'true'); // Save preference
-        router.replace('/(tabs)/calendar'); // Navigate to the next screen without permissions
+        await AsyncStorage.setItem('hasSeenOnboarding', 'true');
+        router.replace('/(tabs)/calendar');
     };
 
     return (
@@ -78,7 +32,7 @@ const AllowNotifications = () => {
                     onPress={handleContinue}
                 >
                     <Text style={styles.primaryButtonText}>
-                        {permissionGranted ? 'Suivant' : 'Activer les notifications'}
+                        {'Activer les notifications'}
                     </Text>
                 </TouchableOpacity>
                 
@@ -86,7 +40,7 @@ const AllowNotifications = () => {
                     style={styles.secondaryButton} 
                     onPress={handleSkip}
                 >
-                    <Text style={styles.secondaryButtonText}>Skip for now</Text>
+                    <Text style={styles.secondaryButtonText}>Pas maintenant</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
