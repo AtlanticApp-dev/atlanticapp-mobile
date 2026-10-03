@@ -13,7 +13,7 @@ const Index: React.FC<{}> = () => {
             </View>
             
             <View style={styles.middle_part}>
-                <Image source={require('@/assets/images/logo-atlanticup-no-background.png')} style={{ width: '100%', height: '100%'}} />
+                <Image source={require('@/assets/images/logo-atlanticup-no-background.png')} style={{ flex:1, aspectRatio: 1, resizeMode: 'contain' }} />
             </View>
             <View style={styles.bottom_part}>
                 <Text style={styles.description}>Suivez les scores, annonces et plus encore!</Text>
