@@ -6,7 +6,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SchoolPicker from '@/src/components/SchoolPicker';
 import { getAllDelegations } from '@/src/api/services/firestore/delegationService';
-import { getAuth } from '@react-native-firebase/auth';
 
 const width = Dimensions.get('window').width;
 
@@ -31,20 +30,7 @@ const Preferences: React.FC<PreferencesProps> = () => {
     };
 
     const nextStep = async () => {
-        const auth = getAuth();
-        const currentUser = auth.currentUser;
-        const uid = currentUser ? currentUser.uid : null; 
-
-        // Store the selected school with the user's UID if available
-        if (uid) {
-            // You might want to store this in Firestore or somewhere else
-            //await updateUser(uid, { supported_team: selectedSchoolID });   commenté pour le dev
-            //console.log("User's supported team updated:", selectedSchoolID);
-        }
-        else{
-            console.error("No user is currently authenticated.");
-        }
-        
+        //TODO : enregistrer les préférences de l'utilisateur dans Firestore (école, sports, etc.) avant de passer à l'étape suivante        
         router.push('/(onboarding)/preferencesSports');
     };
 
