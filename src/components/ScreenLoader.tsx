@@ -18,9 +18,9 @@ const images = [
     require('@/assets/images/emojis/man_in_business_suit_levitating.png'),
     require('@/assets/images/emojis/martial_arts_uniform.png'), 
     require('@/assets/images/emojis/surfer.png'),
-    require('@/assets/images/emojis/swimmer.png'),
+    require('@/assets/images/emojis/tunnel.png'),
     require('@/assets/images/emojis/tada.png'),
-    require('@/assets/images/emojis/tennis.png'),
+    require('@/assets/images/emojis/grue.png'),
     require('@/assets/images/emojis/trophy.png'),
     require('@/assets/images/emojis/weight_lifter.png'),
 ];
