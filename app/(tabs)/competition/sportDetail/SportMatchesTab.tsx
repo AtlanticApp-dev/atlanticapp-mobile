@@ -71,6 +71,7 @@ const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}
         setRefreshing(true);
         setLastDoc(null);
         setHasMore(true);
+        setMatches([]);
         
         try {
             let result;
