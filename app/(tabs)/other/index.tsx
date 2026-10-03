@@ -190,7 +190,7 @@ const ProfileScreen: React.FC = () => {
         <ScrollView showsVerticalScrollIndicator={false}>
             <SafeAreaView style={styles.container}>
                 <View style={styles.logo_container}> 
-                    <Image source={require('@/assets/images/logo-atlanticup-no-background.png')} style={{ width: width * 0.6, height: width * 0.5}} />
+                    <Image source={require('@/assets/images/logo-atlanticup-no-background.png')} style={{ width: width * 0.5, height: width * 0.5}} />
                 </View>
 
                 <View style={styles.annoucements_container}>
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     logo_container: {
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 20,
+        marginBottom: 20
     },
     description_container: {
         marginBottom: 20,

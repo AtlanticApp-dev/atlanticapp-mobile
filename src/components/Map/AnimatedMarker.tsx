@@ -39,8 +39,9 @@ const styles = StyleSheet.create({
         padding:3,
     },
     image:{
-        height:40,
-        width:40,
+        height:30,
+        width:30,
+        margin:5
     }
 });
 

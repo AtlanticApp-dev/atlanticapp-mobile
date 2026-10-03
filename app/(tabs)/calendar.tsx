@@ -29,23 +29,33 @@ const CalendarTab: React.FC = () => {
     const blackList : string[] = ['completed', 'cancelled'];
 
     const scrollY = useRef(new Animated.Value(0)).current;
-    const listHeight = scrollY.interpolate({
-        inputRange: [0, screenHeight * 0.3],
-        outputRange: [screenHeight * 0.5, screenHeight * 0.8],
-        extrapolate: 'clamp',
-    });
 
-    const headerHeight = scrollY.interpolate({
-        inputRange: [0, screenHeight * 0.3],
-        outputRange: [screenHeight * 0.5 - insets.top, screenHeight * 0.2 - insets.top],
+    const interpolationInputRange = [0, screenHeight * 0.3];
+
+    const listHeight = scrollY.interpolate({
+        inputRange: interpolationInputRange,
+        outputRange: [screenHeight * 0.6 - insets.top - insets.bottom, screenHeight],
         extrapolate: 'clamp',
     });
 
     const listMargin = scrollY.interpolate({
-        inputRange: [0, screenHeight * 0.3],
+        inputRange: interpolationInputRange,
         outputRange: [screenWidth * 0.08, 0],
         extrapolate: 'clamp',
     });
+
+    const headerHeight = scrollY.interpolate({
+        inputRange: interpolationInputRange,
+        outputRange: [screenHeight * 0.4 - insets.top - insets.bottom,0],
+        extrapolate: 'clamp',
+    });
+
+    const headerOpacity = scrollY.interpolate({
+        inputRange: [0, screenHeight * 0.15],
+        outputRange: [1, 0],
+        extrapolate: 'clamp',
+    });
+    
 
     const getTeamFromStorage = async () => {
         const team = await AsyncStorage.getItem("supported_delegation");
@@ -140,7 +150,7 @@ const CalendarTab: React.FC = () => {
         <SafeAreaView style={[styles.container,{paddingBottom: insets.bottom}]}>
             <View style={[styles.background,{paddingTop: insets.top}]}>
                 <Animated.View 
-                    style={[{ height: headerHeight, width: screenWidth}]}>
+                    style={[{ height: headerHeight, width: screenWidth, opacity: headerOpacity}]}>
                         {/*<AnimatedBackground
                             mainLogoSource={mainLogo}
                             iconSource={mainLogo}
