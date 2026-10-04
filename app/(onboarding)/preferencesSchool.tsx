@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SchoolPicker from '@/src/components/SchoolPicker';
 import { getAllDelegations } from '@/src/api/services/firestore/delegationService';
+import { updateUserSupportedTeam } from '@/src/api/services/firestore/usersService';
 
 const width = Dimensions.get('window').width;
 
@@ -20,14 +21,21 @@ const Preferences: React.FC<PreferencesProps> = () => {
     const [selectedSchoolName, setSelectedSchoolName] = useState<string | null>(null);
     const [selectedSchoolImage, setSelectedSchoolImage] = useState<string | null>(null);
     const [selectedSchoolColor, setSelectedSchoolColor] = useState<string | null>(null);
-    const [teams, setTeams] = useState<any[]>([]);
-    const [loadingTeams, setLoadingTeams] = useState(true);
+    const [delegations, setDelegations] = useState<any[]>([]);
+    const [loadingDelegations, setLoadingDelegations] = useState(true);
+    const [loadingUser, setLoadingUser] = useState(false);
 
-    const fetchTeams = async () => {
-        const teams = await getAllDelegations();
-        setTeams(teams);
-        setLoadingTeams(false);
+    const fetchDelegations = async () => {
+        const delegations = await getAllDelegations();
+        setDelegations(delegations);
+        setLoadingDelegations(false);
     };
+
+    const handleSchoolSelected = async (school_id : string | null) => {
+        setLoadingUser(true);
+        await updateUserSupportedTeam(school_id);
+        setLoadingUser(false);
+    }
 
     const nextStep = async () => {
         //TODO : enregistrer les préférences de l'utilisateur dans Firestore (école, sports, etc.) avant de passer à l'étape suivante        
@@ -44,6 +52,10 @@ const Preferences: React.FC<PreferencesProps> = () => {
             );
             return;
         }
+        else {
+            await handleSchoolSelected(selectedSchoolID);
+        }
+
         nextStep();
     };
 
@@ -56,13 +68,13 @@ const Preferences: React.FC<PreferencesProps> = () => {
     };
 
     React.useEffect(() => {
-        setLoadingTeams(true);
-        fetchTeams();
+        setLoadingDelegations(true);
+        fetchDelegations();
     }, []);
 
     React.useEffect(() => {
-        if (selectedSchoolID && !loadingTeams) {
-            const selectedTeam = teams.find(team => team.id === selectedSchoolID);
+        if (selectedSchoolID && !loadingDelegations) {
+            const selectedTeam = delegations.find(delegation => delegation.id === selectedSchoolID);
             if (selectedTeam) {
                 setSelectedSchoolName(selectedTeam.title);
                 setSelectedSchoolImage(selectedTeam.image);
@@ -77,14 +89,14 @@ const Preferences: React.FC<PreferencesProps> = () => {
             setSelectedSchoolImage(null);
             setSelectedSchoolColor(null);
         }
-    }, [selectedSchoolID, loadingTeams]);
+    }, [selectedSchoolID, loadingDelegations]);
 
     return (
         <SafeAreaView style={styles.main_container}>
             <View style={styles.title_container}>
                 <Text style={styles.title}>De quelle école est-tu le supporter?</Text>
             </View>
-            <View style={styles.team_selection_container}>
+            <View style={styles.delegation_selection_container}>
                 <TouchableOpacity style={{height:'100%', aspectRatio:1}} onPress={handleSchoolPickerPress}>
                     <View style={{height:'100%', width:'100%'}}>
                         <SchoolPicker selectedSchoolID={selectedSchoolID} selectedSchoolName={selectedSchoolName} selectedSchoolImage={selectedSchoolImage} selectedSchoolColor={selectedSchoolColor} />
@@ -96,7 +108,7 @@ const Preferences: React.FC<PreferencesProps> = () => {
                 <Button mode="contained" onPress={() => router.back()}>
                     Revenir en arrière
                 </Button>    
-                <Button mode="contained" onPress={continueOnboarding}>
+                <Button mode="contained" onPress={continueOnboarding} loading={loadingUser}>
                     Suivant
                 </Button>
             </View>
@@ -111,14 +123,14 @@ const Preferences: React.FC<PreferencesProps> = () => {
                     <View style={styles.modal_list_container}>
                             <FlatList
                                 numColumns={2}
-                                data={teams}
+                                data={delegations}
                                 keyExtractor={(item) => item.id}
                                 contentContainerStyle={{ alignItems: 'center', justifyContent: 'center'}}
                                 showsVerticalScrollIndicator={false}
                                 renderItem={({ item }) => (
-                                    <TouchableOpacity onPress={() => { setSelectedSchoolID(item.id); setModalVisible(false); AsyncStorage.setItem("atlanticup_team", item.id); }} style={styles.team_card}>
-                                        <Image source={{ uri: item.image }} style={styles.team_card_image} />
-                                        <Text style={styles.team_card_text}>{item.title}</Text>
+                                    <TouchableOpacity onPress={() => { setSelectedSchoolID(item.id); setModalVisible(false); AsyncStorage.setItem("atlanticup_team", item.id); }} style={styles.delegation_card}>
+                                        <Image source={{ uri: item.image }} style={styles.delegation_card_image} />
+                                        <Text style={styles.delegation_card_text}>{item.title}</Text>
                                     </TouchableOpacity>
                                 )}
                             />
@@ -151,7 +163,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#333',
     },
-    team_selection_container: {
+    delegation_selection_container: {
         flex: 1,
         width: '100%',
         justifyContent: 'center',
@@ -186,7 +198,7 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5,
     },
-    team_card: {
+    delegation_card: {
         width: width*0.3,
         aspectRatio: 1,
         margin: 10,
@@ -194,13 +206,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    team_card_image: {
+    delegation_card_image: {
         width: '100%',
         aspectRatio: 1,
         borderRadius: 20,
         marginBottom: 10,
     },
-    team_card_text: {
+    delegation_card_text: {
         fontWeight: 'bold',
         fontSize: 14,
         textAlign: 'center',
