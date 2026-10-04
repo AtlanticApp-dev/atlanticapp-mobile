@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     },
     carouselContainer: {
         position: 'absolute',
-        bottom: 150,
+        bottom: 100,
         width: SCREEN_W,        
         height: 100,
     },
