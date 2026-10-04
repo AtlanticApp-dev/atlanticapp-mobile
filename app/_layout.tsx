@@ -13,7 +13,6 @@ import { Alert } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider } from 'react-native-paper';
-import { checkNotificationPermission, getFcmToken, saveFcmToken } from '@/src/api/services/messaging/fcmService';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -81,28 +80,10 @@ export default function RootLayout() {
           redirectFromNotification(remoteMessage);
         }
       });
-
-    const unsubscribeTokenRefresh = messaging().onTokenRefresh(newToken => {
-      //TODO: utiliser le vrai uid de l'utilisateur actuellement connecté
-      saveFcmToken('', newToken);
-    })
-
-    const initializeNotifications = async () => {
-      try {
-        await checkNotificationPermission();
-        //TODO: utiliser le vrai uid de l'utilisateur actuellement connecté
-        await getFcmToken('');
-      } catch (error) {
-        console.error('Error initializing notifications:', error);
-      }
-    }
      
-    initializeNotifications();
-
     return () => {
       unsubscribe();
       unsubscribeNotificationOpened();
-      unsubscribeTokenRefresh();
     };
   }, []);
 

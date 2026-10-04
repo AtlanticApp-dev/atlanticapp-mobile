@@ -4,7 +4,6 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList} from 'react-
 import { Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getAllRawSports } from '@/src/api/services/firestore/sportsService';
-import { getAuth } from '@react-native-firebase/auth';
 
 const PreferencesSports = () => {
 
@@ -23,20 +22,7 @@ const PreferencesSports = () => {
     };
 
     const continueOnboarding = async () => {
-        const auth = getAuth();
-        const currentUser = auth.currentUser;
-        const uid = currentUser ? currentUser.uid : null; 
-
-        // Store the selected school with the user's UID if available
-        if (uid) {
-            // You might want to store this in Firestore or somewhere else
-            //await updateUser(uid, { followed_sports: selectedSports });  commenté pour le dev
-            //console.log("User's followed sports updated:", selectedSports);
-        }
-        else{
-            console.error("No user is currently authenticated.");
-        }
-        
+        //TODO : enregistrer les sports préférés de l'utilisateur dans Firestore avant de passer à l'étape suivante
         router.push('/(onboarding)/allowNotifications'); // Navigate to the next step after selecting sports
     };
 

@@ -7,8 +7,7 @@ export default function Index() {
 
   useEffect(() => {
     const checkOnboarding = async () => {
-      const seen = "true";
-      //const seen = await AsyncStorage.getItem('hasSeenOnboarding');
+      const seen = await AsyncStorage.getItem('hasSeenOnboarding');
       if (!seen || seen === 'false') {
         router.replace('/(onboarding)');
       } else {
