@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SectionList, TouchableOpacity, Modal, FlatList, Pressable } from 'react-native';
+import { View, Text, StyleSheet, SectionList, TouchableOpacity, Modal, FlatList, Pressable, ActivityIndicator } from 'react-native';
 import { getMatchesFromSportIdAndCategory, getMatchesFromSportIdAndCategoryIdAndPhaseId, useAllFinalPhaseMatches } from '@/src/api/services/firestore/matchService';
 import { useGroups } from '@/src/api/services/firestore/rankingService';
 import EventCard from '@/src/components/Event/EventCard';
@@ -24,13 +24,12 @@ const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}
     const [selectedPhaseId, setSelectedPhaseId] = useState<string | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [showBracket, setShowBracket] = useState(false);
-    const [bracket, setBracket] = useState<any>(null);
 
     // Récupérer tous les groupes pour cette compétition
     const { data: groups = [] } = useGroups(sport_id, category_id);
     
     // Récupérer tous les matchs des phases finales avec React Query
-    const { data: allFinalMatches = [], isLoading: loadingBracket } = useAllFinalPhaseMatches(sport_id, category_id);
+    const { data: allFinalMatches = [], isLoading: loadingBracket, refetch: refetchAllFinalMatches } = useAllFinalPhaseMatches(sport_id, category_id);
 
     // Déterminer quelles phases ont réellement des matchs
     // Mettre à jour quand tous les matchs sont chargés (pas de phase sélectionnée) ou quand sport/category change
@@ -71,6 +70,7 @@ const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}
         setRefreshing(true);
         setLastDoc(null);
         setHasMore(true);
+        setMatches([]);
         
         try {
             let result;
@@ -96,6 +96,13 @@ const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}
         setRefreshing(false);
     };
 
+    const handleRefresh = async () => {
+        await Promise.all([
+            fetchMatches(sport_id, selectedPhaseId),
+            refetchAllFinalMatches()
+        ]);
+    };
+
     const handlePhaseSelect = (phase_id: string | null) => {
         setSelectedPhaseId(phase_id);
         setModalVisible(false);
@@ -108,14 +115,7 @@ const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}
      * Avec React Query, les données sont déjà fetchées automatiquement
      */
     const toggleBracketView = () => {
-        if (showBracket) {
-            setShowBracket(false);
-        } else {
-            // Construire le bracket avec les matchs déjà fetchés par React Query
-            const bracketData = buildTournamentBracket(allFinalMatches);
-            setBracket(bracketData);
-            setShowBracket(true);
-        }
+        setShowBracket(prev => !prev);
     };
 
     const turnIntoSectionList = (matches: any[]) => {
@@ -236,6 +236,21 @@ const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}
                 </TouchableOpacity>
             </View>
 
+            {showBracket && (
+                <TouchableOpacity
+                    style={[styles.floatingRefreshButton, refreshing && styles.floatingRefreshButtonDisabled]}
+                    onPress={handleRefresh}
+                    disabled={refreshing}
+                    activeOpacity={0.8}
+                >
+                    {refreshing ? (
+                        <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                        <Text style={styles.floatingRefreshButtonText}>Rafraîchir</Text>
+                    )}
+                </TouchableOpacity>
+            )}
+
             {/* Affichage conditionnel : Bracket ou Liste */}
             {showBracket ? (
                 <TournamentBracket 
@@ -246,7 +261,7 @@ const SportMatchesTab: React.FC<SportMatchesTabProps> = ({sport_id, category_id}
                 />
             ) : (
                 <SectionList
-                    onRefresh={() => fetchMatches(sport_id, selectedPhaseId)}
+                    onRefresh={handleRefresh}
                     refreshing={refreshing}
                     style={{ width: '100%'}}
                     sections={sectionListData}
@@ -400,6 +415,32 @@ const styles = StyleSheet.create({
     cancelButtonText: {
         fontSize: 16,
         color: '#ff3b30',
+        fontWeight: '600',
+    },
+    floatingRefreshButton: {
+        position: 'absolute',
+        bottom: 24,
+        alignSelf: 'center',
+        minWidth: 140,
+        height: 48,
+        paddingHorizontal: 24,
+        borderRadius: 24,
+        backgroundColor: '#4287f5',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+        elevation: 6,
+        zIndex: 1,  
+    },
+    floatingRefreshButtonDisabled: {
+        backgroundColor: '#9bbcf0',
+    },
+    floatingRefreshButtonText: {
+        color: '#fff',
+        fontSize: 16,
         fontWeight: '600',
     },
 });
