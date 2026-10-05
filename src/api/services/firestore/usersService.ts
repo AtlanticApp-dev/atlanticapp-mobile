@@ -68,17 +68,10 @@ export const updateUser = async (uid: string, data: Partial<User>): Promise<void
 
 export const updateUserSupportedTeam = async (teamId: string | null): Promise<void> => {
     try {
-        await setLocalFavoriteDelegation(teamId);
-
-        await subscribeToDelegation(teamId);
-
-        const currentUser = auth().currentUser;
-        const uid = currentUser?.uid;
-        
-        if (uid){
-            const userRef = doc(db, 'users', uid);
-            await updateDoc(userRef, {supported_delegation: teamId});
-        }
+        await Promise.all([
+            setLocalFavoriteDelegation(teamId),
+            subscribeToDelegation(teamId),
+        ])
     } catch (error) {
         console.error('Error updating user supported team:', error);
         throw error;
@@ -87,16 +80,10 @@ export const updateUserSupportedTeam = async (teamId: string | null): Promise<vo
 
 export const updateUserFollowedSports = async (sportsId : string[]): Promise<void> => {
     try {
-        await setLocalSupportedSports(sportsId);
-
-        await subscribeToSports(sportsId);
-        const currentUser = auth().currentUser;
-        const uid = currentUser?.uid;
-
-        if (uid){
-            const userRef = doc(db, 'users', uid);
-            await updateDoc(userRef, {followed_sports: sportsId});
-        }
+        await Promise.all([
+            setLocalSupportedSports(sportsId),
+            subscribeToSports(sportsId),
+        ]);
     } catch (error) {
         console.error('Error updating user followed sports:', error);
         throw error;

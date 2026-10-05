@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList} from 'react-
 import { Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getAllRawSports } from '@/src/api/services/firestore/sportsService';
+import { updateUserFollowedSports } from '@/src/api/services/firestore/usersService';
 
 const PreferencesSports = () => {
 
@@ -11,6 +12,7 @@ const PreferencesSports = () => {
 
     const [sports, setSports] = React.useState<any[]>([]);
     const [selectedSports, setSelectedSports] = React.useState<string[]>([]);
+    const [loadingUser, setLoadingUser] = React.useState(false);
 
     const fetchSports = async () => {
         try {
@@ -21,8 +23,18 @@ const PreferencesSports = () => {
         }
     };
 
+    const handleSportsChanges = async () => {
+        if (selectedSports.length === 0) {
+            return;
+        }
+
+        setLoadingUser(true);
+        await updateUserFollowedSports(selectedSports);
+        setLoadingUser(false);
+    };
+
     const continueOnboarding = async () => {
-        //TODO : enregistrer les sports préférés de l'utilisateur dans Firestore avant de passer à l'étape suivante
+        await handleSportsChanges();
         router.push('/(onboarding)/allowNotifications'); // Navigate to the next step after selecting sports
     };
 
@@ -62,8 +74,8 @@ const PreferencesSports = () => {
                 <Button mode="contained" onPress={() => router.back()}>
                     Revenir en arrière
                 </Button>    
-                <Button mode="contained" onPress={continueOnboarding}>
-                    Terminer
+                <Button mode="contained" onPress={continueOnboarding} loading={loadingUser}>
+                    Suivant
                 </Button>
             </View>
 
