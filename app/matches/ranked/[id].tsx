@@ -255,7 +255,7 @@ const MatchPage: React.FC<Props> = () => {
         <SafeAreaView style={styles.container}>
                 <View style={styles.content_container}>
                     <View style={{width:'100%', height:'100%'}}>
-                                <Text style={{ fontWeight: 'bold', fontSize: 20, textAlign: 'center', margin: 10 }}>{translatePhase(match.phase)}</Text>
+                                <Text style={{ fontWeight: 'bold', fontSize: 20, textAlign: 'center', margin: 10 }}>{translatePhase(match.phase_id)}</Text>
                                 <Text style={{ fontWeight: 'bold', fontSize: 12, marginBottom: 5}}>{match.description}</Text>
                             {hasNecessaryPermissions ? 
                                 (

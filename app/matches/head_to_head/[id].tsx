@@ -397,7 +397,7 @@ const MatchPage: React.FC = () => {
                     </View>
 
                     <View>
-                        <Text style={{ fontWeight: 'bold', fontSize: 20, textAlign: 'center', margin: 10 }}>{translatePhase(match.phase)}</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 20, textAlign: 'center', margin: 10 }}>{translatePhase(match.phase_id)}</Text>
                         <Text style={{ fontWeight: 'bold', fontSize: 16, textAlign: 'center', marginBottom: 30 }}>{match.description}</Text>
                     </View>
 
