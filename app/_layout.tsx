@@ -23,7 +23,7 @@ export default function RootLayout() {
   });
 
   const redirectFromNotification = (remoteMessage: any) => {
-    if (remoteMessage.data?.type === 'new_match_alert' && remoteMessage.data?.matchId) {
+    if (remoteMessage.data?.type == 'new_match_alert' && remoteMessage.data?.matchId) {
       redirectToMatch(remoteMessage.data.matchId, remoteMessage.data.matchType);
     }
     //TODO : gérer d'autres types de notifications (ex: alertes d'événements, d'annonces, etc.)
@@ -34,9 +34,9 @@ export default function RootLayout() {
   }
 
   const redirectToMatch = (matchId: any, matchType: any) => {
-    if (matchType === 'head_to_head_match') {
+    if (matchType == 'head_to_head_match') {
       router.push(`/matches/head_to_head/${matchId}`);
-    } else if (matchType === 'ranked_match') {
+    } else if (matchType == 'ranked_match') {
       router.push(`/matches/ranked/${matchId}`);
     }
     else {
