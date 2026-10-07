@@ -7,6 +7,7 @@ import { usePlace} from '@/src/api/services/firestore/placeService';
 import { translateStatus } from '@/src/utils/matchMetadataTranslator';
 import { useSport } from '@/src/api/services/firestore/sportsService';
 import { useCategory } from '@/src/api/services/firestore/categoryService';
+import { useLiveMatch } from '@/src/api/services/firestore/matchService'
 
 interface Match {
     id: string;
@@ -49,6 +50,7 @@ interface Team {
 interface MatchCardProps {
     match: Match;
 }
+
 
 const HeadToHeadMatchCard: React.FC<MatchCardProps> = ({ match }) => {
 
@@ -99,6 +101,16 @@ const HeadToHeadMatchCard: React.FC<MatchCardProps> = ({ match }) => {
         return days[(new Date(date)).getDay()];
     };
 
+    const liveMatch = useLiveMatch(match.id, match.status === 'live');
+    const teams = liveMatch?.teams ?? match.teams; // le score déjà chargé sert de valeur initiale
+    const status = liveMatch?.status ?? match.status;
+
+    const score1 = teams?.[0]?.score;
+    const score2 = teams?.[1]?.score;
+    const showScore =
+        (status === 'live' || status === 'completed') && score1 != null && score2 != null;
+    const isArrayScore = Array.isArray(score1) && Array.isArray(score2);
+
     if (!isCategoryLoading && !isTeam1Loading && !isTeam2Loading && !isDelegation1Loading && !isDelegation2Loading && !isPlaceLoading && !isSportLoading) {
         return (
             <TouchableOpacity style={styles.container} onPress={() => router.push(`/matches/head_to_head/${match.id}`)} onLongPress={() => null}>
@@ -124,10 +136,24 @@ const HeadToHeadMatchCard: React.FC<MatchCardProps> = ({ match }) => {
                         <Text style={styles.teamName} numberOfLines={1}>{delegation1?.title} {team1?.description}</Text>
                     </View>
                     
-                    <View style={styles.scoreContainer}>
+                <View style={styles.scoreContainer}>
+                    {!showScore ? (
                         <Text style={styles.vsText}>VS</Text>
-                    </View>
-                    
+                    ) : isArrayScore ? (
+                        <View style={styles.arrayScoreContainer}>
+                            {score1.map((s: number, i: number) => (
+                                <Text key={i} style={styles.score}>{s} - {score2[i]}</Text>
+                            ))}
+                        </View>
+                    ) : (
+                        <>
+                            <Text style={styles.score}>{score1}</Text>
+                            <Text style={styles.scoreSeparator}>-</Text>
+                            <Text style={styles.score}>{score2}</Text>
+                        </>
+                    )}
+                </View>
+
                     <View style={styles.teamInfo}>
                         <Image source={{ uri: delegation2?.image }} style={styles.teamLogo} />
                         <Text style={styles.teamName} numberOfLines={1}>{delegation2?.title} {team2?.description}</Text>
