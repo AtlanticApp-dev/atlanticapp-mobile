@@ -1,6 +1,7 @@
 import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, query, limit, orderBy, startAfter, where } from "@react-native-firebase/firestore";
 import { useQuery } from "@tanstack/react-query";
-
+import { onSnapshot } from "@react-native-firebase/firestore";
+import { useEffect, useState } from "react";
 const db = getFirestore();
 
 interface Match{
@@ -291,4 +292,26 @@ export const useAllFinalPhaseMatches = (sportId: string, categoryId: string) => 
         enabled: !!sportId && !!categoryId,
         staleTime: 5 * 60 * 1000, // 5 minutes de cache
     });
+};
+
+
+export const useLiveMatch = (matchId: string | undefined, enabled: boolean) => {
+    const [live, setLive] = useState<{ teams: any[]; status: string } | null>(null);
+
+    useEffect(() => {
+        if (!enabled || !matchId) return;
+
+        const unsubscribe = onSnapshot(
+            doc(db, 'matches', matchId),
+            (snap) => {
+                const data = snap.data();
+                if (data) setLive({ teams: data.teams, status: data.status });
+            },
+            (err) => console.error('Erreur match live:', err)
+        );
+
+        return unsubscribe;
+    }, [matchId, enabled]);
+
+    return live;
 };
