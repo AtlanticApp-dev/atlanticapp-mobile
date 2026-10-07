@@ -29,20 +29,20 @@ export default function ContactPage() {
                                 {
                                     text: 'Copier le numéro',
                                     onPress: () => {
-                                        Clipboard.setString('+33632004156');
+                                        Clipboard.setString('+33769355669');
                                         Alert.alert('Copié', 'Le numéro a été copié dans le presse-papiers');
                                     }
                                 },
                                 {
                                     text: 'Envoyer un SMS',
                                     onPress: () => {
-                                        handlePress('sms:+33632004156');
+                                        handlePress('sms:+33769355669');
                                     }
                                 },
                                 {
                                     text: 'Appeler',
                                     onPress: () => {
-                                        handlePress('tel:++33632004156');
+                                        handlePress('tel:++33769355669');
                                     }
                                 },
                                 {
@@ -55,8 +55,8 @@ export default function ContactPage() {
                 >
                     <Ionicons name="call" size={24} color="#007AFF" />
                     <View style={styles.contactInfo}>
-                        <Text style={styles.contactLabel}>Nélia FEDELE</Text>
-                        <Text style={styles.contactValue}>+33 6 32 00 41 56</Text>
+                        <Text style={styles.contactLabel}>Alex LAUDOU</Text>
+                        <Text style={styles.contactValue}>+33 7 69 35 56 69</Text>
                     </View>
                 </TouchableOpacity>
 
@@ -70,20 +70,20 @@ export default function ContactPage() {
                                 {
                                     text: 'Copier le numéro',
                                     onPress: () => {
-                                        Clipboard.setString('33781264134');
+                                        Clipboard.setString('+33769287645');
                                         Alert.alert('Copié', 'Le numéro a été copié dans le presse-papiers');
                                     }
                                 },
                                 {
                                     text: 'Envoyer un SMS',
                                     onPress: () => {
-                                        handlePress('sms:+33781264134');
+                                        handlePress('sms:+33769287645');
                                     }
                                 },
                                 {
                                     text: 'Appeler',
                                     onPress: () => {
-                                        handlePress('tel:+33781264134');
+                                        handlePress('tel:+33769287645');
                                     }
                                 },
                                 {
@@ -96,8 +96,8 @@ export default function ContactPage() {
                 >
                     <Ionicons name="call" size={24} color="#007AFF" />
                     <View style={styles.contactInfo}>
-                        <Text style={styles.contactLabel}>Hippolyte RAYMOND</Text>
-                        <Text style={styles.contactValue}>+33 7 81 26 41 34</Text>
+                        <Text style={styles.contactLabel}>Jean DE SEZE</Text>
+                        <Text style={styles.contactValue}>+33 7 69 28 76 45</Text>
                     </View>
                 </TouchableOpacity>
             </View>
